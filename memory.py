@@ -2,14 +2,14 @@ import address
 
 MIN_ADDR=0x0000
 MAX_ADDR=0x0FFF
-MIN_VAL=0x0000
-MAX_VAL=0xFFFF
+MIN_VALUE=-0x0000
+MAX_VALUE=0xFFFF
 
 def valid_addr(addr):
 	return (MIN_ADDR<=addr and addr<=MAX_ADDR)
 
 def valid_value(num):
-	if not(MIN_VAL<=num and num<=MAX_VAL):
+	if not(MIN_VALUE<=num and num<=MAX_VALUE):
 		raise ValueError("Incompatible size")
 
 class memory:
