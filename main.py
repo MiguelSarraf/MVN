@@ -13,7 +13,6 @@ def help():
 	print("    m     [ini] [fim] [arq]    Lista conteúdo da memória")
 	print("    h                          Ajuda")
 	print("    x                          Finaliza MVN e terminal")
-	print("")
 
 def inicialize():
 	mvn=MVN.MVN()
@@ -24,6 +23,7 @@ def inicialize():
 		pass
 	else:
 		print("Inicializacao padrao de dispositivos\n")
+	return mvn
 
 def head():
 	print("                Escola Politécnica da Universidade de São Paulo")
@@ -38,16 +38,36 @@ def clean(line):
 			res.append(word)
 	return res
 
-inicialize()
+def load(name, mvn):
+	file=open(name, "r")
+	code=file.read().split("\n")
+	for line in range(len(code)):
+		try:
+			code[line]=code[line][:code[line].index(";")]
+		except:
+			pass
+		code[line]=clean(code[line])
+		if len(code[line])!=2:
+			if len(code[line])==0:
+				code.pop(line)
+			else:
+				raise ValueError("Mais de dois numeros na instrucao")
+	mvn.set_memory(code)
+	print("Programa "+name+" carregado")
+
+mvn=inicialize()
 head()
 help()
 
-goon=True
-while goon:
-	command=input("> ")
+goon=False
+vals=True
+sbs=True
+
+while True:
+	command=input("\n> ")
 	command=clean(command)
 	if command[0]=="i":
-		inicialize()
+		mvn=inicialize()
 	elif command[0]=="p":
 		if len(command)==1:
 			name=input("Informe o nome do arquivo de entrada: ")
@@ -55,15 +75,59 @@ while goon:
 			if len(name)!=1:
 				print("Arquivo deve ter exatamente 1 palavra, "+str(len(command))+" passadas.")
 			else:
-				#load(name)
+				load(name[0], mvn)
+				goon=True
 				pass
 		elif len(command)>2:
 			print("Arquivo deve ter exatamente 1 palavra, "+str(len(command)-1)+" passadas.")
 		else:
 			name=command[1]
-			#load(name)
+			load(name, mvn)
+			goon=True
 	elif command[0]=="r":
-		pass
+		if goon:
+			try:
+				mvn.IC.set_value(int(input("Informe o endereco do IC ["+str(mvn.IC.get_value()).zfill(4)+"]: "), 16))
+			except:
+				pass
+
+			if vals:
+				s="s"
+			else:
+				s="n"
+			try:
+				vals=input("Exibir valores dos registradores a cada passo do ciclo FDE? <s/n> ["+s+"]: ")
+				vals=vals=="s" or len(vals)==0
+			except:
+				vals=True
+
+			if vals:
+				if sbs:
+					s="s"
+				else:
+					s="n"
+				try:
+					sbs=input("Excutar a MVN passo a passo? <s/n> ["+s+"]: ")
+					sbs=sbs=="s" or len(sbs)==0
+				except:
+					sbs=True
+			else:
+				sbs=False
+
+			if vals:
+				print(" MAR  MDR  IC   IR   OP   OI   AC")
+				print("---- ---- ---- ---- ---- ---- ----")
+
+			while goon:
+				goon=mvn.step()
+				if vals:
+					if sbs:
+						read=input(mvn.print_state())
+					else:
+						mvn.print_state()
+					
+		else:
+			print("Nenhum arquivo foi carregado, nada a ser executado.")
 	elif command[0]=="b":
 		pass
 	elif command[0]=="s":
@@ -71,8 +135,9 @@ while goon:
 	elif command[0]=="g":
 		pass
 	elif command[0]=="m":
-		pass
+		mvn.dump_memory(command[1], command[2])
 	elif command[0]=="h":
 		pass
 	elif command[0]=="x":
+		print("Terminal encerrado.")
 		exit()
