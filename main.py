@@ -30,6 +30,10 @@ def head():
 	print("                 PCS3616 - Simulador da Máquina de von Neumann")
 	print("          MVN versão 5.0 (Maio/2020) - Todos os direitos reservados")
 
+def reg_head():
+	print(" MAR  MDR  IC   IR   OP   OI   AC")
+	print("---- ---- ---- ---- ---- ---- ----")
+
 def clean(line):
 	res=[]
 	line=line.split(" ")
@@ -115,8 +119,7 @@ while True:
 				sbs=False
 
 			if vals:
-				print(" MAR  MDR  IC   IR   OP   OI   AC")
-				print("---- ---- ---- ---- ---- ---- ----")
+				reg_head()
 
 			while goon:
 				goon=mvn.step()
@@ -133,7 +136,8 @@ while True:
 	elif command[0]=="s":
 		pass
 	elif command[0]=="g":
-		pass
+		reg_head()
+		print(mvn.print_state())
 	elif command[0]=="m":
 		if len(command)!=3:
 			try:
