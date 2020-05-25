@@ -150,7 +150,7 @@ while True:
 			except:
 				print("Enderecos não são valores hexadecimais.")
 	elif command[0]=="h":
-		pass
+		help()
 	elif command[0]=="x":
 		print("Terminal encerrado.")
 		exit()
