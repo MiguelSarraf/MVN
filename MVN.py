@@ -120,4 +120,4 @@ class MVN:
 			self.mem.set_value(int(data[0], 16), int(data[1], 16))
 
 	def dump_memory(self, start, stop):
-		self.mem.show(int(start, 16), int(stop, 16))
+		self.mem.show(start, stop)

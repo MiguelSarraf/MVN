@@ -135,7 +135,20 @@ while True:
 	elif command[0]=="g":
 		pass
 	elif command[0]=="m":
-		mvn.dump_memory(command[1], command[2])
+		if len(command)!=3:
+			try:
+				start=int(input("Informe o endereco inicial: "), 16)
+				stop=int(input("Informe o endereco final: "), 16)
+				mvn.dump_memory(start, stop)
+			except:
+				print("Enderecos não são valores hexadecimais.")
+		else:
+			try:
+				start=int(command[1], 16)
+				stop=int(command[2], 16)
+				mvn.dump_memory(start, stop)
+			except:
+				print("Enderecos não são valores hexadecimais.")
 	elif command[0]=="h":
 		pass
 	elif command[0]=="x":
