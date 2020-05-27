@@ -1,6 +1,15 @@
 import memory
 import register
 import ULA
+import device
+
+def clean(line):
+	res=[]
+	line=line.split(" ")
+	for word in line:
+		if word!="":
+			res.append(word)
+	return res
 
 class MVN:
 	def __init__(self):
@@ -13,6 +22,9 @@ class MVN:
 		self.OI=register.register()
 		self.AC=register.register()
 		self.ula=ULA.ULA()
+		self.devs=[]
+		self.devs.append(device.device(0,0))
+		self.devs.append(device.device(1,0))
 
 	def fetch(self):
 		self.MAR.set_value(self.IC.get_value())
@@ -98,12 +110,16 @@ class MVN:
 		return False
 
 	def gd(self):
-		#self.AC.set_value(self.io.get_data(self.OI.get_value()))
+		for dev in self.devs:
+			if self.OI.get_value()//0x0100==dev.get_type() and self.OI.get_value()%0x0100==dev.get_UC():
+				self.AC.set_value(dev.get_data())
 		self.IC.set_value(self.IC.get_value()+2)
-		return True
+		return True	
 
 	def pd(self):
-		#self.io.put_data(self.OI.get_value(), self.AC.get_value())
+		for dev in self.devs:
+			if self.OI.get_value()//0x0100==dev.get_type() and self.OI.get_value()%0x0100==dev.get_UC():
+				dev.put_data(self.AC.get_value())
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
@@ -121,3 +137,44 @@ class MVN:
 
 	def dump_memory(self, start, stop):
 		self.mem.show(start, stop)
+
+	def create_disp(self):
+		file=open("disp.lst", "r")
+		lines=file.read().split("\n")
+		for line in lines:
+			line=clean(line)
+			if line[0]=="0":
+				if len(line)!=3 or line[2]!="mvn.dispositivo.Teclado":
+					raise ValueError("'disp.lst' file badly formulated")
+				self.devs.append(device.device(0, int(line[1])))
+			elif line[0]=="1":
+				if len(line)!=3 or line[2]!="mvn.dispositivo.Monitor":
+					raise ValueError("'disp.lst' file badly formulated")
+				self.devs.append(device.device(1, int(line[1])))
+			elif line[0]=="2":
+				if len(line)!=4 or line[2]!="mvn.dispositivo.Impressora":
+					raise ValueError("'disp.lst' file badly formulated")
+				self.devs.append(device.device(1, int(line[1]), printer=line[3]))
+			elif line[0]=="3":
+				if len(line)!=5 or line[2]!="mvn.dispositivo.Disco":
+					raise ValueError("'disp.lst' file badly formulated")
+				self.devs.append(device.device(1, int(line[1]), line[3], line[4]))
+
+	def print_devs(self):
+		translate={"0":"Teclado", "1":"Monitor", "2":"Impressora", "3":"Disco"}
+		for dev in self.devs:
+			print("  "+str(dev.get_type())+"    "+str(dev.get_UC()).zfill(2)+"   "+translate[str(dev.get_type())])
+
+	def show_available_devs(self):
+		self.devs[0].show_available()
+
+	def new_dev(self, dtype, UC, file=None, rwb=None, printer=None):
+		for dev in self.devs:
+			if dev.get_type()==dtype and dev.get_UC()==UC:
+				raise ValueError("Device ja existe")
+		self.devs.append(device.device(dtype, UC, file, rwb, printer))
+
+	def rm_dev(self, dtype, UC):
+		for dev in range(len(self.devs)):
+			if self.devs[dev].get_type()==dtype and self.devs[dev].get_UC()==UC:
+				self.devs.pop(dev)

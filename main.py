@@ -17,10 +17,9 @@ def help():
 def inicialize():
 	mvn=MVN.MVN()
 	print("MVN Inicializada\n")
-
 	if os.path.exists("disp.lst"):
-		#mvn.create_disp()
-		pass
+		mvn.create_disp()
+		print("Dispositivos de 'disp.lst' inicializados")
 	else:
 		print("Inicializacao padrao de dispositivos\n")
 	return mvn
@@ -29,6 +28,10 @@ def head():
 	print("                Escola Politécnica da Universidade de São Paulo")
 	print("                 PCS3616 - Simulador da Máquina de von Neumann")
 	print("          MVN versão 5.0 (Maio/2020) - Todos os direitos reservados")
+
+def dev_head():
+	print("Tipo   UC   Dispositivo")
+	print("---------------------------------")
 
 def reg_head():
 	print(" MAR  MDR  IC   IR   OP   OI   AC")
@@ -134,7 +137,56 @@ while True:
 	elif command[0]=="b":
 		pass
 	elif command[0]=="s":
-		pass
+		dev_head()
+		mvn.print_devs()
+		choice=input("Adicionar(a) ou remover(r) (ENTER para cancelar): ")
+		if choice=="a":
+			mvn.show_available_devs()
+			dtype=input("Entrar com o tipo de dispositivo (ou ENTER para cancelar): ")
+			try:
+				dtype=int(dtype)
+				go=True
+			except:
+				print("O tipo de dispositivo especificado é inválido (especifique um valor numérico).")
+				go=False
+			if go:
+				UC=input("Entrar com a unidade logica (ou ENTER para cancelar): ")
+				try:
+					UC=int(UC)
+					go=True
+				except:
+					print("O tipo de dispositivo especificado é inválido (especifique um valor numérico).")
+					go=False
+			if go:
+				if dtype==2:
+					name=input("Entrar com o nome da impressora: ")
+					mvn.new_dev(dtype, UC, printer=name)
+				elif dtype==3:
+					file=input("Digite o nome do arquivo: ")
+					met=input("Digite o modo de operação -> Leitura(l), Escrita(e) ou Leitura e Escrita(b): ")
+					mvn.new_dev(dtype, UC, file, met)
+				else:
+					mvn.new_dev(dtype, UC)
+				print("Dispositivo adicionado (Tipo: "+str(dtype)+" - unidade logica: "+str(UC)+")")
+		elif choice=="r":
+			mvn.show_available_devs()
+			dtype=input("Entrar com o tipo de dispositivo (ou ENTER para cancelar): ")
+			try:
+				dtype=int(dtype)
+				go=True
+			except:
+				print("O tipo de dispositivo especificado é inválido (especifique um valor numérico).")
+				go=False
+			if go:
+				UC=input("Entrar com a unidade logica (ou ENTER para cancelar): ")
+				try:
+					UC=int(UC)
+					go=True
+				except:
+					print("O tipo de dispositivo especificado é inválido (especifique um valor numérico).")
+					go=False
+			if go:
+				mvn.rm_dev(dtype, UC)
 	elif command[0]=="g":
 		reg_head()
 		print(mvn.print_state())
