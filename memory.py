@@ -2,17 +2,28 @@ import address
 
 MIN_ADDR=0x0000
 MAX_ADDR=0x0FFF
-MIN_VALUE=-0x0000
+MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
 
+#Test if argument is between 0x0000 and 0xFFFF, raise erro
 def valid_addr(addr):
-	return (MIN_ADDR<=addr and addr<=MAX_ADDR)
+	if not(MIN_ADDR<=addr and addr<=MAX_ADDR):
+		raise ValueError("Incompatible address")
 
+#Test if argument is between 0x0000 and 0x0FFF, raise erro
 def valid_value(num):
 	if not(MIN_VALUE<=num and num<=MAX_VALUE):
 		raise ValueError("Incompatible size")
 
+'''
+This class represents the memory of the MVN, it has an 
+collection of addresses that vary from 0x0000 to 0xFFFF.
+It contains methods to get, set and print those values.
+'''
 class memory:
+
+	'''Inicialize the memory with the value in the argument
+	(default 0x0000) in every position'''
 	def __init__(self, value=0x0000):
 		valid_value(value)
 		self.map=[]
