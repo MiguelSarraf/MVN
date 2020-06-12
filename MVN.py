@@ -168,11 +168,13 @@ class MVN:
 	'''dev:=AC
 	IC:=IC+1'''
 	def pd(self):
+		err=0
 		for dev in self.devs:
 			if self.OI.get_value()//0x0100==dev.get_type() and self.OI.get_value()%0x0100==dev.get_UC():
 				dev.put_data(self.AC.get_value())
-			else:
-				raise ValueError("Dispositivo não existe")
+				err+=1
+		if err==len(self.devs):
+			raise ValueError("Dispositivo não existe")
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
@@ -200,7 +202,6 @@ class MVN:
 	def create_disp(self):
 		file=open("disp.lst", "r")
 		lines=file.read().split("\n")
-		print(lines)
 		cont=0
 		while cont < len(lines):
 			if lines[cont]=="":
@@ -209,7 +210,6 @@ class MVN:
 			cont+=1
 		for line in lines:
 			line=clean(line)
-			print(line)
 			if line[0]=="0":
 				if len(line)!=3 or line[2]!="mvn.dispositivo.Teclado":
 					raise ValueError("'disp.lst' file badly formulated")
@@ -248,4 +248,5 @@ class MVN:
 	def rm_dev(self, dtype, UC):
 		for dev in range(len(self.devs)):
 			if self.devs[dev].get_type()==dtype and self.devs[dev].get_UC()==UC:
+				self.devs[dev].terminate()
 				self.devs.pop(dev)

@@ -15,9 +15,22 @@ def help():
 	print("    b                          Ativa/Desativa modo Debug")
 	print("    s                          Manipula dispositivos de I/O")
 	print("    g                          Lista conteúdo dos registradores")
-	print("    m     [ini] [fim] [arq]    Lista conteúdo da memória")
+	print("    m     [ini] [fim]          Lista conteúdo da memória")
 	print("    h                          Ajuda")
 	print("    x                          Finaliza MVN e terminal")
+
+def dbg_help():
+	print(" COMANDO  PARÂMETROS           OPERAÇÃO")
+	print("---------------------------------------------------------------------------")
+	print("    c                          Continua execução")
+	print("    s                          Avança um passo na execução")
+	print("    b     [addr]               Insere um breakpoint")
+	print("    x                          Pausa execução")
+	print("    h                          Ajuda")
+	print("    r     [reg] [val]          Atribui valor a registrador")
+	print("    a     [addr] [val]         Atribui valor a memória")
+	print("    e                          Mostra valores dos registradores")
+	print("    m     [ini] [fim]          Lista conteúdo da memória")
 
 '''Start an MVN, check if there is any 'disp.lst' file and 
 inicialze the devices in it, return the MVN inicialized'''
@@ -93,11 +106,13 @@ help()
 
 '''These booleans will represent if the code should continue to 
 execute (goon), if the register values are to be shown on screen 
-(vals) and if MVN should be executed step by step (sbs)
+(vals), if MVN should be executed step by step (sbs) and if the
+debugger mode is active (dbg)
 '''
 goon=False
 vals=True
 sbs=False
+dbg=False
 
 #This loop will deal with the MVN's interface commands
 while True:
@@ -112,8 +127,8 @@ while True:
 	elif command[0]=="i":
 		mvn=inicialize()
 
-	'''To load an program, one argument (the file) is required, if 
-	it's not given, ask for it, if more are passed, cancel operation'''
+	#To load an program, one argument (the file) is required, if 
+	#it's not given, ask for it, if more are passed, cancel operation
 	elif command[0]=="p":
 		if len(command)==1:
 			name=input("Informe o nome do arquivo de entrada: ")
@@ -131,58 +146,127 @@ while True:
 			load(name, mvn)
 			goon=True
 
-	'''To run the program we have to ask the user it's preference 
-	on the starting address and on vals and sbs booleans, so one by 
-	one, those are asked, note that if vals is false, sbs must be 
-	false too.
-	Got these values, execute instructions until goon turns False.'''
+	#To run the program we have to ask the user it's preference 
+	#on the starting address and on vals and sbs booleans, so one by 
+	#one, those are asked, note that if vals is false, sbs must be 
+	#false too.
+	#Got these values, execute instructions until goon turns False.
 	elif command[0]=="r":
 		if goon:
 			try:
 				mvn.IC.set_value(int(input("Informe o endereco do IC ["+str(mvn.IC.get_value()).zfill(4)+"]: "), 16))
 			except:
 				pass
-
-			if vals:
-				s="s"
-			else:
-				s="n"
-			try:
-				vals=input("Exibir valores dos registradores a cada passo do ciclo FDE? <s/n> ["+s+"]: ")
-				vals=vals=="s" or len(vals)==0
-			except:
-				vals=True
-
-			if vals:
-				if sbs:
+			if not dbg:
+				if vals:
 					s="s"
 				else:
 					s="n"
 				try:
-					sbs=input("Excutar a MVN passo a passo? <s/n> ["+s+"]: ")
-					sbs=sbs=="s" or len(sbs)==0
+					vals=input("Exibir valores dos registradores a cada passo do ciclo FDE? <s/n> ["+s+"]: ")
+					vals=vals=="s" or len(vals)==0
 				except:
-					sbs=True
-			else:
-				sbs=False
+					vals=True
 
-			if vals:
-				reg_head()
-
-			while goon:
-				goon=mvn.step()
 				if vals:
 					if sbs:
-						read=input(mvn.print_state())
+						s="s"
 					else:
-						print(mvn.print_state())
+						s="n"
+					try:
+						sbs=input("Excutar a MVN passo a passo? <s/n> ["+s+"]: ")
+						sbs=sbs=="s"
+					except:
+						sbs=True
+				else:
+					sbs=False
+
+				if vals:
+					reg_head()
+					
+				while goon:
+					goon=mvn.step()
+					if vals:
+						if sbs:
+							read=input(mvn.print_state())
+						else:
+							print(mvn.print_state())
+
+			else:
+				read=input("Inserir breakpoint: ")
+				while len(read)!=0:
+					breakpoints.append(int(read, 16))
+					read=input("Inserir breakpoint: ")
+				print("Começando simulação")
+				reg_head()
+				step=False
+				while goon:
+					goon=mvn.step()
+					print(mvn.print_state())
+					if step or mvn.MAR.get_value() in breakpoints:
+						step=False
+						out=False
+						while not out:
+							read=input("dgb: ")
+							if len(read)==0:
+								pass
+							elif read=="c":
+								out=True
+							elif read=="s":
+								step=True
+								out=True
+							elif read[0]=="b":
+								breakpoints.append(int(read.split(" ")[1], 16))
+							elif read=="x":
+								out=True
+								goon=False
+							elif read=="h":
+								dbg_help()
+							elif read[0]=="r":
+								read=read.split(" ")
+								if read[1] not in ["MAR", "MDR", "IC", "IR", "OP", "OI", "AC"]:
+									print("Registrador invalido.")
+								elif read[1]=="MAR":
+									mvn.MAR.set_value(int(read[2], 16))
+								elif read[1]=="MDR":
+									mvn.MDR.set_value(int(read[2], 16))
+								elif read[1]=="IC":
+									mvn.IC.set_value(int(read[2], 16))
+								elif read[1]=="IR":
+									mvn.IR.set_value(int(read[2], 16))
+								elif read[1]=="OP":
+									mvn.OP.set_value(int(read[2], 16))
+								elif read[1]=="OI":
+									mvn.OI.set_value(int(read[2], 16))
+								elif read[1]=="AC":
+									mvn.AC.set_value(int(read[2], 16))
+							elif read[0]=="a":
+								read=read.split(" ")
+								mvn.mem.set_value(int(read[1], 16), int(read[2], 16))
+							elif read=="e":
+								reg_head()
+								print(mvn.print_state())
+							elif read[0]=="m":
+								read=read.split(" ")
+								mvn.dump_memory(int(read[1], 16), int(read[2], 16))
+							else:
+								print("Comando não reconhecido\nPressione h para ajuda.")
+					else:
+						pass
+
+			goon=True
 					
 		else:
 			print("Nenhum arquivo foi carregado, nada a ser executado.")
 
-	#Start the debugger mode
+	#Start/stop the debugger mode
 	elif command[0]=="b":
-		pass
+		dbg=not dbg
+		if dbg:
+			print("Modo debugger ativado")
+			breakpoints=[]
+		else:
+			print("Modo debugger desativado")
 
 	#Display the available devices and give options to add or remove
 	elif command[0]=="s":
@@ -265,5 +349,7 @@ while True:
 		
 	#Exit terminal
 	elif command[0]=="x":
+		for dev in mvn.devs:
+			dev.terminate()
 		print("Terminal encerrado.")
 		exit()
