@@ -19,6 +19,7 @@ def help():
 	print("    h                          Ajuda")
 	print("    x                          Finaliza MVN e terminal")
 
+#Print commands for debugger mode
 def dbg_help():
 	print(" COMANDO  PARÂMETROS           OPERAÇÃO")
 	print("---------------------------------------------------------------------------")
@@ -92,6 +93,104 @@ def load(name, mvn):
 	mvn.set_memory(code)
 	print("Programa "+name+" carregado")
 
+'''Run the code normally using mvn method step. Fisrt thing to do
+is define the values of the booleans vals and sbs and then run until
+goon turns false'''
+def run(mvn, goon, vals, sbs):
+	if vals:
+		s="s"
+	else:
+		s="n"
+	try:
+		vals=input("Exibir valores dos registradores a cada passo do ciclo FDE? <s/n> ["+s+"]: ")
+		vals=vals=="s" or len(vals)==0
+	except:
+		vals=True
+
+	if vals:
+		if sbs:
+			s="s"
+		else:
+			s="n"
+		try:
+			sbs=input("Excutar a MVN passo a passo? <s/n> ["+s+"]: ")
+			sbs=sbs=="s"
+		except:
+			sbs=True
+	else:
+		sbs=False
+
+	if vals:
+		reg_head()
+		
+	while goon:
+		goon=mvn.step()
+		if vals:
+			if sbs:
+				read=input(mvn.print_state())
+			else:
+				print(mvn.print_state())
+
+'''Run the code in debugger mode, in this mode vals and sbs are not
+needed. The debugger mode has it's own instruction set, to execute 
+debugging operations, see bdg_help() for complete guide'''
+def run_dbg(mvn, goon):
+	print("Começando simulação")
+	reg_head()
+	step=False
+	while goon:
+		if step or mvn.MAR.get_value() in breakpoints:
+			step=False
+			out=False
+			while not out:
+				read=input("dgb: ")
+				if len(read)==0:
+					pass
+				elif read=="c":
+					out=True
+				elif read=="s":
+					step=True
+					out=True
+				elif read[0]=="b":
+					breakpoints.append(int(read.split(" ")[1], 16))
+				elif read=="x":
+					out=True
+					goon=False
+				elif read=="h":
+					dbg_help()
+				elif read[0]=="r":
+					read=read.split(" ")
+					if read[1] not in ["MAR", "MDR", "IC", "IR", "OP", "OI", "AC"]:
+						print("Registrador invalido.")
+					elif read[1]=="MAR":
+						mvn.MAR.set_value(int(read[2], 16))
+					elif read[1]=="MDR":
+						mvn.MDR.set_value(int(read[2], 16))
+					elif read[1]=="IC":
+						mvn.IC.set_value(int(read[2], 16))
+					elif read[1]=="IR":
+						mvn.IR.set_value(int(read[2], 16))
+					elif read[1]=="OP":
+						mvn.OP.set_value(int(read[2], 16))
+					elif read[1]=="OI":
+						mvn.OI.set_value(int(read[2], 16))
+					elif read[1]=="AC":
+						mvn.AC.set_value(int(read[2], 16))
+				elif read[0]=="a":
+					read=read.split(" ")
+					mvn.mem.set_value(int(read[1], 16), int(read[2], 16))
+				elif read=="e":
+					reg_head()
+					print(mvn.print_state())
+				elif read[0]=="m":
+					read=read.split(" ")
+					mvn.dump_memory(int(read[1], 16), int(read[2], 16))
+				else:
+					print("Comando não reconhecido\nPressione h para ajuda.")
+		goon=mvn.step()
+		print(mvn.print_state())
+
+
 """
 Here starts the main code for the MVN's user interface, this will 
 look like a cmd to the user, but operating the MVN class
@@ -147,10 +246,8 @@ while True:
 			goon=True
 
 	#To run the program we have to ask the user it's preference 
-	#on the starting address and on vals and sbs booleans, so one by 
-	#one, those are asked, note that if vals is false, sbs must be 
-	#false too.
-	#Got these values, execute instructions until goon turns False.
+	#on the starting address and call correspondent function to 
+	#execute the code dependind if the debugger mode is on
 	elif command[0]=="r":
 		if goon:
 			try:
@@ -158,104 +255,10 @@ while True:
 			except:
 				pass
 			if not dbg:
-				if vals:
-					s="s"
-				else:
-					s="n"
-				try:
-					vals=input("Exibir valores dos registradores a cada passo do ciclo FDE? <s/n> ["+s+"]: ")
-					vals=vals=="s" or len(vals)==0
-				except:
-					vals=True
-
-				if vals:
-					if sbs:
-						s="s"
-					else:
-						s="n"
-					try:
-						sbs=input("Excutar a MVN passo a passo? <s/n> ["+s+"]: ")
-						sbs=sbs=="s"
-					except:
-						sbs=True
-				else:
-					sbs=False
-
-				if vals:
-					reg_head()
-					
-				while goon:
-					goon=mvn.step()
-					if vals:
-						if sbs:
-							read=input(mvn.print_state())
-						else:
-							print(mvn.print_state())
-
+				run(mvn, goon, vals, sbs)
 			else:
-				read=input("Inserir breakpoint: ")
-				while len(read)!=0:
-					breakpoints.append(int(read, 16))
-					read=input("Inserir breakpoint: ")
-				print("Começando simulação")
-				reg_head()
-				step=False
-				while goon:
-					goon=mvn.step()
-					print(mvn.print_state())
-					if step or mvn.MAR.get_value() in breakpoints:
-						step=False
-						out=False
-						while not out:
-							read=input("dgb: ")
-							if len(read)==0:
-								pass
-							elif read=="c":
-								out=True
-							elif read=="s":
-								step=True
-								out=True
-							elif read[0]=="b":
-								breakpoints.append(int(read.split(" ")[1], 16))
-							elif read=="x":
-								out=True
-								goon=False
-							elif read=="h":
-								dbg_help()
-							elif read[0]=="r":
-								read=read.split(" ")
-								if read[1] not in ["MAR", "MDR", "IC", "IR", "OP", "OI", "AC"]:
-									print("Registrador invalido.")
-								elif read[1]=="MAR":
-									mvn.MAR.set_value(int(read[2], 16))
-								elif read[1]=="MDR":
-									mvn.MDR.set_value(int(read[2], 16))
-								elif read[1]=="IC":
-									mvn.IC.set_value(int(read[2], 16))
-								elif read[1]=="IR":
-									mvn.IR.set_value(int(read[2], 16))
-								elif read[1]=="OP":
-									mvn.OP.set_value(int(read[2], 16))
-								elif read[1]=="OI":
-									mvn.OI.set_value(int(read[2], 16))
-								elif read[1]=="AC":
-									mvn.AC.set_value(int(read[2], 16))
-							elif read[0]=="a":
-								read=read.split(" ")
-								mvn.mem.set_value(int(read[1], 16), int(read[2], 16))
-							elif read=="e":
-								reg_head()
-								print(mvn.print_state())
-							elif read[0]=="m":
-								read=read.split(" ")
-								mvn.dump_memory(int(read[1], 16), int(read[2], 16))
-							else:
-								print("Comando não reconhecido\nPressione h para ajuda.")
-					else:
-						pass
-
-			goon=True
-					
+				run_dbg(mvn, goon)
+			goon=True	
 		else:
 			print("Nenhum arquivo foi carregado, nada a ser executado.")
 
