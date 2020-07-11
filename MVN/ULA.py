@@ -1,16 +1,7 @@
+from mvnutils import *
+
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
-
-#Test if argument is 1,2,4,5,6 or 7, raise error
-def is_valid_instru(num):
-	if num not in [1,2,4,5,6,7]:
-		raise ValueError("Incompatible instruction")
-
-#Test if argument is between 0x0000 and 0xFFFF, raise error
-def valid_value(num):
-	if not(MIN_VALUE<=num and num<=MAX_VALUE):
-		raise ValueError("Incompatible size")
-
 
 '''
 This class represents an simple Logic and Arthimatic Unit 
@@ -29,9 +20,9 @@ class ULA:
 	'''Check if the given instruction is valid and performs the
 	right operation'''
 	def execute(self, op, ac, oi=0x0000):
-		is_valid_instru(op)
-		valid_value(ac)
-		valid_value(oi)
+		valid_instru(op)
+		valid_value(ac, MIN_VALUE, MAX_VALUE)
+		valid_value(oi, MIN_VALUE, MAX_VALUE)
 		if op==1:
 			return self.is_zero(ac)
 		elif op==2:

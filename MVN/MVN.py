@@ -2,16 +2,7 @@ import memory
 import register
 import ULA
 import device
-
-'''Splits the received string by spaces and removes strings with 
-no content'''
-def clean(line):
-	res=[]
-	line=line.split(" ")
-	for word in line:
-		if word!="":
-			res.append(word)
-	return res
+from mvnutils import *
 
 '''
 This is the class for the MVN, it contains one memory 

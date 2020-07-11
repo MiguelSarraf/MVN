@@ -4,6 +4,7 @@ __version__="5.0"
 
 import MVN
 import os.path
+from mvnutils import *
 
 #Print all the commands available
 def help():
@@ -60,16 +61,6 @@ def dev_head():
 def reg_head():
 	print(" MAR  MDR  IC   IR   OP   OI   AC")
 	print("---- ---- ---- ---- ---- ---- ----")
-
-'''Separate an given string by spaces and remove substrings with 
-no content'''
-def clean(line):
-	res=[]
-	line=line.split(" ")
-	for word in line:
-		if word!="":
-			res.append(word)
-	return res
 
 '''Open given file, read it, separate memory and addresses and 
 send them to the MVN memory'''
@@ -136,14 +127,16 @@ needed. The debugger mode has it's own instruction set, to execute
 debugging operations, see bdg_help() for complete guide'''
 def run_dbg(mvn, goon):
 	print("Começando simulação")
+	print("Os comandos internos do dbg são")
+	dbg_help()
 	reg_head()
-	step=False
+	step=True
 	while goon:
 		if step or mvn.MAR.get_value() in breakpoints:
 			step=False
 			out=False
 			while not out:
-				read=input("dgb: ")
+				read=input("(dgb) ")
 				if len(read)==0:
 					pass
 				elif read=="c":
@@ -187,7 +180,7 @@ def run_dbg(mvn, goon):
 					mvn.dump_memory(int(read[1], 16), int(read[2], 16))
 				else:
 					print("Comando não reconhecido\nPressione h para ajuda.")
-		goon=mvn.step()
+		goon=mvn.step() and goon
 		print(mvn.print_state())
 
 
@@ -251,7 +244,7 @@ while True:
 	elif command[0]=="r":
 		if goon:
 			try:
-				mvn.IC.set_value(int(input("Informe o endereco do IC ["+str(mvn.IC.get_value()).zfill(4)+"]: "), 16))
+				mvn.IC.set_value(int(input("Informe o endereco do IC ["+str(hex(mvn.IC.get_value())[2:]).zfill(4)+"]: "), 16))
 			except:
 				pass
 			if not dbg:

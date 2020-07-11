@@ -1,11 +1,7 @@
+from mvnutils import *
+
 MIN_VALUE=0x0000
 MAX_VALUE=0x00FF
-
-#Test if argument is between 0x0000 and 0x00FF, raise error
-def valid_value(num):
-	if not(MIN_VALUE<=num and num<=MAX_VALUE):
-		raise ValueError("Incompatible size")
-
 '''
 This class is for an address in the memory, it is defined by
 one address number and one value contained in this address.
@@ -15,12 +11,12 @@ class address:
 
 	#Inicialize address and value
 	def __init__(self, addr, value=0x00):
-		valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.addr=addr
 		self.value=value
 
 	def set_value(self, value):
-		valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.value=value
 
 	def get_addr(self):

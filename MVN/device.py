@@ -1,35 +1,9 @@
 import os.path
 import subprocess
+from mvnutils import *
 
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
-
-#Test if argument is between 0 and 4, raise error
-def is_valid_type(val):
-	if not(val>=0 and val<=3):
-		raise ValueError("Incompatible type")
-
-#Test if the given file exists, raise error
-def is_valid_file(file):
-	if not(os.path.exists(file)):
-		raise ValueError("File does not exist")
-
-#Test if given rwb is valid, raise error
-def is_valid_rwb(rwb):
-	if rwb not in ["e", "l", "b"]:
-		raise ValueError("Incompatible parameter")
-
-#Test if the printer exists in OS, raise error
-def is_valid_printer(printer):
-	try:
-		out=subprocess.check_output(["lpstat", "-p", printer])
-	except:
-		raise ValueError("Impressora invalida")
-
-#Test if argument is between 0x0000 and 0xFFFF, raise error
-def is_valid_value(num):
-	if not(MIN_VALUE<=num and num<=MAX_VALUE):
-		raise ValueError("Incompatible size")
 
 '''
 This class represents an simple I/O device for MVN, it can
@@ -44,29 +18,29 @@ class device:
 	'''Inicialize the device given the type, the UC and other
 	convinient parameters'''
 	def __init__(self, dtype, UC, file=None, rwb=None, printer=None):
-		is_valid_type(dtype)
+		valid_type(dtype)
 		self.dtype=dtype
 		self.UC=UC
 		if self.dtype==3:
-			is_valid_rwb(rwb)
+			valid_rwb(rwb)
 			if rwb=="e":
 				self.file_write=open(file, "wb")
 				self.file_read=None
 			elif rwb=="l":
-				is_valid_file(file)
+				valid_file(file)
 				self.file_write=None
 				self.file_read=open(file, "rb")
 				self.buffer=self.file_read.read()
 				self.counter=0
 			elif rwb=="b":
-				is_valid_file(file)
+				valid_file(file)
 				self.file_write=open(file, "wb")
 				self.file_read=open(file, "rb")
 				self.buffer=self.file_read.read()
 				self.counter=0
 				self.file_write.write(bytes(self.buffer, "UTF-8"))
 		elif self.dtype==2:
-			is_valid_printer(printer)
+			valid_printer(printer)
 			self.printer=printer
 		elif self.dtype==0:
 			self.buffer=[]
@@ -104,7 +78,7 @@ class device:
 	def put_data(self, value):
 		if not self.is_writable():
 			raise ValueError("Unwritable device")
-		is_valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		if self.dtype==1:
 			print(chr(value//0x0100)+chr(value%0x0100))
 		elif self.dtype==2:

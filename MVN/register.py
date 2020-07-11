@@ -1,10 +1,7 @@
+from mvnutils import *
+
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
-
-#Test if argument is between 0x0000 and 0xFFFF, raise error
-def valid_value(num):
-	if not(MIN_VALUE<=num and num<=MAX_VALUE):
-		raise ValueError("Incompatible size")
 
 '''
 This class is for an register in the MVN, it has only it's
@@ -15,7 +12,7 @@ class register:
 
 	#Inicialize the register with value
 	def __init__(self, value=0x00):
-		valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.value=value
 
 	def set_value(self, value):

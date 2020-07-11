@@ -1,19 +1,10 @@
 import address
+from mvnutils import *
 
 MIN_ADDR=0x0000
 MAX_ADDR=0x0FFF
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
-
-#Test if argument is between 0x0000 and 0xFFFF, raise erro
-def valid_addr(addr):
-	if not(MIN_ADDR<=addr and addr<=MAX_ADDR):
-		raise ValueError("Incompatible address")
-
-#Test if argument is between 0x0000 and 0x0FFF, raise erro
-def valid_value(num):
-	if not(MIN_VALUE<=num and num<=MAX_VALUE):
-		raise ValueError("Incompatible size")
 
 '''
 This class represents the memory of the MVN, it has an 
@@ -25,25 +16,25 @@ class memory:
 	'''Inicialize the memory with the value in the argument
 	(default 0x0000) in every position'''
 	def __init__(self, value=0x0000):
-		valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.map=[]
 		for cont in range(MAX_ADDR//2):
 			self.map.append(address.address(2*cont, value//0x100))
 			self.map.append(address.address(2*cont+1, value-(value//0x100)*0x100))
 
 	def get_value(self, addr):
-		valid_addr(addr)
+		valid_value(addr, MIN_ADDR, MAX_ADDR)
 		return self.map[addr].get_value()*0x100+self.map[addr+1].get_value()
 
 	def set_value(self, addr, value):
-		valid_addr(addr)
-		valid_value(value)
+		valid_value(addr, MIN_ADDR, MAX_ADDR)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.map[addr].set_value(value//0x100)
 		self.map[addr+1].set_value(value-(value//0x100)*0x100)
 
 	def show(self, start, stop):
-		valid_addr(start)
-		valid_addr(stop)
+		valid_value(start, MIN_ADDR, MAX_ADDR)
+		valid_value(stop, MIN_ADDR, MAX_ADDR)
 		if start>stop:
 			raise ValueError("Uncompatible values")
 		print("       00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F  ")
