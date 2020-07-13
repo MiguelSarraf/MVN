@@ -65,6 +65,7 @@ def reg_head():
 '''Open given file, read it, separate memory and addresses and 
 send them to the MVN memory'''
 def load(name, mvn):
+	valid_file(name)
 	file=open(name, "r")
 	code=file.read().split("\n")
 	line=0

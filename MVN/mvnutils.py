@@ -1,3 +1,6 @@
+import os.path
+import subprocess
+
 #Test if argument is between MIN and MAX, raise error
 def valid_value(num, MIN, MAX):
 	if not(MIN<=num and num<=MAX):

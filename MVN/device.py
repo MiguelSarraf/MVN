@@ -1,4 +1,3 @@
-import os.path
 import subprocess
 from mvnutils import *
 
