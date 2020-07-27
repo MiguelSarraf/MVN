@@ -16,7 +16,7 @@ class register:
 		self.value=value
 
 	def set_value(self, value):
-		valid_value(value)
+		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.value=value
 		
 	def get_value(self):

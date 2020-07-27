@@ -1,6 +1,6 @@
 __author__="Miguel Sarraf Ferreira Santucci"
 __email__="miguel.sarraf@usp.br"
-__version__="5.0"
+__version__="1.0"
 
 import MVN
 import os.path
@@ -50,7 +50,7 @@ def inicialize():
 def head():
 	print("                Escola Politécnica da Universidade de São Paulo")
 	print("                 PCS3616 - Simulador da Máquina de von Neumann")
-	print("          MVN versão 5.0 (Maio/2020) - Todos os direitos reservados")
+	print("          MVN versão 1.0 (Maio/2020) - Todos os direitos reservados")
 
 #Print the header for the devices
 def dev_head():
@@ -133,51 +133,61 @@ def run_dbg(mvn, goon):
 	reg_head()
 	step=True
 	while goon:
+		'''Using the MAR instead of IC because it's the current
+		executing address'''
 		if step or mvn.MAR.get_value() in breakpoints:
 			step=False
 			out=False
 			while not out:
-				read=input("(dgb) ")
+				read=input("(dgb) ").split(" ")
 				if len(read)==0:
 					pass
-				elif read=="c":
+				elif read[0]=="c":
 					out=True
-				elif read=="s":
+				elif read[0]=="s":
 					step=True
 					out=True
 				elif read[0]=="b":
-					breakpoints.append(int(read.split(" ")[1], 16))
-				elif read=="x":
+					if len(read)>1:
+						for breaks in read[1:]:
+							try:
+								breakpoints.append(int(breaks, 16))
+							except:
+								print("Breakpoint deve ser um valor inteiro hexadecimal")
+					else:
+						print("Nenhum endereço passado na instrução")
+				elif read[0]=="x":
 					out=True
 					goon=False
-				elif read=="h":
+				elif read[0]=="h":
 					dbg_help()
 				elif read[0]=="r":
-					read=read.split(" ")
-					if read[1] not in ["MAR", "MDR", "IC", "IR", "OP", "OI", "AC"]:
-						print("Registrador invalido.")
-					elif read[1]=="MAR":
-						mvn.MAR.set_value(int(read[2], 16))
-					elif read[1]=="MDR":
-						mvn.MDR.set_value(int(read[2], 16))
-					elif read[1]=="IC":
-						mvn.IC.set_value(int(read[2], 16))
-					elif read[1]=="IR":
-						mvn.IR.set_value(int(read[2], 16))
-					elif read[1]=="OP":
-						mvn.OP.set_value(int(read[2], 16))
-					elif read[1]=="OI":
-						mvn.OI.set_value(int(read[2], 16))
-					elif read[1]=="AC":
-						mvn.AC.set_value(int(read[2], 16))
+					if len(read)==3:
+						try:
+							if read[1] not in ["MAR", "MDR", "IC", "IR", "OP", "OI", "AC"]:
+								print("Registrador invalido.")
+							elif read[1]=="MAR":
+								mvn.MAR.set_value(int(read[2], 16))
+							elif read[1]=="MDR":
+								mvn.MDR.set_value(int(read[2], 16))
+							elif read[1]=="IC":
+								mvn.IC.set_value(int(read[2], 16))
+							elif read[1]=="IR":
+								mvn.IR.set_value(int(read[2], 16))
+							elif read[1]=="OP":
+								mvn.OP.set_value(int(read[2], 16))
+							elif read[1]=="OI":
+								mvn.OI.set_value(int(read[2], 16))
+							elif read[1]=="AC":
+								mvn.AC.set_value(int(read[2], 16))
+						except:
+							print("Enderecos de memória e valores devem ser inteiros hexadecimais")
 				elif read[0]=="a":
-					read=read.split(" ")
 					mvn.mem.set_value(int(read[1], 16), int(read[2], 16))
-				elif read=="e":
+				elif read[0]=="e":
 					reg_head()
 					print(mvn.print_state())
 				elif read[0]=="m":
-					read=read.split(" ")
 					mvn.dump_memory(int(read[1], 16), int(read[2], 16))
 				else:
 					print("Comando não reconhecido\nPressione h para ajuda.")
