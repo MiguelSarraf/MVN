@@ -36,7 +36,7 @@ class MVN:
 	MDR:=mem(MDR)'''
 	def fetch(self):
 		self.MAR.set_value(self.IC.get_value())
-		self.get_mem(self.MAR.get_value())
+		self.get_mem()
 
 	'''Separate instruction in operation+argument
 	IR:=MDR
@@ -62,7 +62,8 @@ class MVN:
 		elif self.OP.get_value()==3:
 			return self.lv()
 		elif self.OP.get_value() in [4,5,6,7]:
-			self.get_mem(self.OI.get_value())
+			self.MAR.set_value(self.OI.get_value())
+			self.get_mem()
 			self.AC.set_value(self.ula.execute(self.OP.get_value(), self.AC.get_value(), self.MDR.get_value()))
 			self.MDR.set_value(self.IR.get_value())
 			self.IC.set_value(self.IC.get_value()+2)
@@ -92,8 +93,8 @@ class MVN:
 		return self.execute()
 
 	#Return the addr's value
-	def get_mem(self, addr):
-		self.MDR.set_value(self.mem.get_value(addr))
+	def get_mem(self):
+		self.MDR.set_value(self.mem.get_value(self.MAR.get_value()))
 
 	#IC:=OI
 	def jp(self):
@@ -107,12 +108,14 @@ class MVN:
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
-	'''MDR:=mem(OI)
+	'''MAR:=OI
+	MDR:=mem(MAR)
 	AC:=MDR
 	MDR:=IR
 	IC:=IC+1'''
 	def ld(self):
-		self.get_mem(self.OI.get_value())
+		self.MAR.set_value(self.OI.get_value())
+		self.get_mem()
 		self.AC.set_value(self.MDR.get_value())
 		self.MDR.set_value(self.IR.get_value())
 		self.IC.set_value(self.IC.get_value()+2)
@@ -132,11 +135,13 @@ class MVN:
 		self.IC.set_value(self.OI.get_value()+2)
 		return True
 
-	'''MDR:=mem(OI)
+	'''MAR:=OI
+	MDR:=mem(OI)
 	IC:=MDR
 	MDR:=IR'''
 	def rs(self):
-		self.get_mem(self.OI.get_value())
+		self.MAR.set_value(self.OI.get_value())
+		self.get_mem()
 		self.IC.set_value(self.MDR.get_value())
 		self.MDR.set_value(self.IR.get_value())
 		return True
