@@ -210,21 +210,21 @@ class MVN:
 		for line in lines:
 			line=clean(line)
 			if line[0]=="0":
-				if len(line)!=3 or line[2]!="mvn.dispositivo.Teclado":
+				if len(line)!=2:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(0, int(line[1])))
 			elif line[0]=="1":
-				if len(line)!=3 or line[2]!="mvn.dispositivo.Monitor":
+				if len(line)!=2:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(1, int(line[1])))
 			elif line[0]=="2":
-				if len(line)!=4 or line[2]!="mvn.dispositivo.Impressora":
+				if len(line)!=3:
 					raise ValueError("'disp.lst' file badly formulated")
-				self.devs.append(device.device(2, int(line[1]), printer=line[3]))
+				self.devs.append(device.device(2, int(line[1]), printer=line[2]))
 			elif line[0]=="3":
-				if len(line)!=5 or line[2]!="mvn.dispositivo.Disco":
+				if len(line)!=4:
 					raise ValueError("'disp.lst' file badly formulated")
-				self.devs.append(device.device(3, int(line[1]), line[3], line[4]))
+				self.devs.append(device.device(3, int(line[1]), line[2], line[3]))
 
 	#Print the devices on device list
 	def print_devs(self):
