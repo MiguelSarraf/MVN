@@ -33,7 +33,7 @@ class MVN:
 
 	'''Set current address and get instruction from memory
 	MAR:=IC
-	MDR:=mem(MDR)'''
+	MDR:=mem(MAR)'''
 	def fetch(self):
 		self.MAR.set_value(self.IC.get_value())
 		self.get_mem()
@@ -65,7 +65,6 @@ class MVN:
 			self.MAR.set_value(self.OI.get_value())
 			self.get_mem()
 			self.AC.set_value(self.ula.execute(self.OP.get_value(), self.AC.get_value(), self.MDR.get_value()))
-			self.MDR.set_value(self.IR.get_value())
 			self.IC.set_value(self.IC.get_value()+2)
 			return True
 		elif self.OP.get_value()==8:
@@ -111,39 +110,43 @@ class MVN:
 	'''MAR:=OI
 	MDR:=mem(MAR)
 	AC:=MDR
-	MDR:=IR
 	IC:=IC+1'''
 	def ld(self):
 		self.MAR.set_value(self.OI.get_value())
 		self.get_mem()
 		self.AC.set_value(self.MDR.get_value())
-		self.MDR.set_value(self.IR.get_value())
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
-	'''mem(OI):=AC
+	'''MAR:=OI
+	MDR:=AC
+	mem(MAR):=MDR
 	IC:=IC+1'''
 	def mm(self):
-		self.mem.set_value(self.OI.get_value(), self.AC.get_value())
+		self.MAR.set_value(self.OI.get_value())
+		self.MDR.set_value(self.AC.get_value())
+		self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
-	'''mem(OI):=IC+2
+	'''MAR:=OI
+	MDR:=IC+1
+	mem(MAR):=MDR
 	IC:=OI+1'''
 	def sc(self):
-		self.mem.set_value(self.OI.get_value(), self.IC.get_value()+2)
+		self.MAR.set_value(self.OI.get_value())
+		self.MDR.set_value(self.IC.get_value()+2)
+		self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
 		self.IC.set_value(self.OI.get_value()+2)
 		return True
 
 	'''MAR:=OI
-	MDR:=mem(OI)
-	IC:=MDR
-	MDR:=IR'''
+	MDR:=mem(MAR)
+	IC:=MDR'''
 	def rs(self):
 		self.MAR.set_value(self.OI.get_value())
 		self.get_mem()
 		self.IC.set_value(self.MDR.get_value())
-		self.MDR.set_value(self.IR.get_value())
 		return True
 
 	#Only returns False, end of the program
