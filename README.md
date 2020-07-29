@@ -14,7 +14,12 @@ The architecture implemented is used to teach the basic of low level programming
 
 ## Dependencies
 
-The only installation needed to run is Python3
+The simulators are coded in Python3, so Its obviously required the machine to have an Python3 interpreter.
+
+Besides that, the libraries used are:
+
+- os
+- subprocess
 
 ## Details
 
@@ -61,6 +66,10 @@ Only to be set when type=2, it's the mode to open the file
 #### printer_name:
 Only to be set when type=3, it's the printer name on the system
 
+## Programming
+
+### To MVN
+
 The MVN accepts 16 instructions, those are:
 
 | OPCODE | MNEMONIC | function |
@@ -83,7 +92,19 @@ The MVN accepts 16 instructions, those are:
 | F | SO |Calls the supervisor to deal with errors |
 
 
-For coding to the MVN, you may write a file (extension ".mvn" preferably) that discribes the inicial state of the memory. To do that you have to set the content of one pair of addresses per line, writing the physical address (hexadecimal between 0x0000 an 0x0FFF) and it's value (hexadecimal between 0x0000 and 0xFFFF) separated by spaces or tabs. Inserting comments (which I strongly recommend as the whole code is made of numbers) can be done with ";".
+For coding to the MVN, you may write a file (extension ".mvn" preferably) that discribes the inicial state of the memory. To do that you have to set the content of one pair of addresses per line, that is done the following way:
+
+```
+XXXX IPPP ;this is a comment
+```
+
+Each X, I and P are representing nibbles.
+
+XXXX is the address you're setting, it's value is between 0x0000 and 0x0FFF.
+
+IPPP is the value to be stored in the address, it's between 0x0000 and 0xFFFF, the most significant nibble, I, is the instruction to be executed and the other three, PPP, is the operand.
+
+### To MLR
 
 The MLR code is still on development, when it's finished I'll be writing the coding instructions for it...
 
