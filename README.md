@@ -63,39 +63,24 @@ Only to be set when type=3, it's the printer name on the system
 
 The MVN accepts 16 instructions, those are:
 
-|OPCODE|MNEMONIC|function
-
-|0     |JP      |Jumps to the operand address
-
-|1     |JZ      |Jumps to the operand address if AC is 0
-
-|2     |JN      |Jumps to the operand address if AC is negative
-
-|3     |LV      |Load the operand to AC
-
-|4     |+_      |Save in AC the value AC+operend
-
-|5     |-_      |Save in AC the value AC-operend
-
-|6     |\*_     |Save in AC the value AC*operend
-
-|7     |/_      |Save in AC the value AC/operend
-
-|8     |LD      |Save in AC the value stored in operand address
-
-|9     |MM      |Save in the operand address the value AC
-
-|A     |SC      |Call subroutine in operand address
-
-|B     |RS      |Return the subroutine that started in operand address
-
-|C     |HM      |Halt machine
-
-|D     |GD      |Save in AC a pair of nibbles from operand device
-
-|E     |PD      |Send value in AC to operand device
-
-|F     |SO      |Calls the supervisor to deal with errors
+| OPCODE | MNEMONIC | function |
+| --- | --- | --- |
+| 0 | JP |Jumps to the operand address |
+| 1 | JZ |Jumps to the operand address if AC is 0 |
+| 2 | JN |Jumps to the operand address if AC is negative |
+| 3 | LV |Load the operand to AC |
+| 4 | +_ |Save in AC the value AC+operend |
+| 5 | -_ |Save in AC the value AC-operend |
+| 6 | \* |Save in AC the value AC*operend |
+| 7 | /_ |Save in AC the value AC/operend |
+| 8 | LD |Save in AC the value stored in operand address |
+| 9 | MM |Save in the operand address the value AC |
+| A | SC |Call subroutine in operand address |
+| B | RS |Return the subroutine that started in operand address |
+| C | HM |Halt machine |
+| D | GD |Save in AC a pair of nibbles from operand device |
+| E | PD |Send value in AC to operand device |
+| F | SO |Calls the supervisor to deal with errors |
 
 
 For coding to the MVN, you may write a file (extension ".mvn" preferably) that discribes the inicial state of the memory. To do that you have to set the content of one pair of addresses per line, writing the physical address (hexadecimal between 0x0000 an 0x0FFF) and it's value (hexadecimal between 0x0000 and 0xFFFF) separated by spaces or tabs. Inserting comments (which I strongly recommend as the whole code is made of numbers) can be done with ";".
