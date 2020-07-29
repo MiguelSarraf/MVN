@@ -1,4 +1,4 @@
-#MVN
+# MVN simulator
 
 ## What?
 
