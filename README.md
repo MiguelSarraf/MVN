@@ -3,7 +3,9 @@
 ## What?
 
 This project is an simulator for an simple processor architecture based on the Von Neumenn Machine. It is an extra simple architecture for a single cycle, 16 instructions, 7 register processor. It contains an MVN module, which runs the code, and an MLR, which is an Mounter, Linker and Relocator, to convert and join assembly files.
+
 The MVN will accept files with the ".mvn" extension and the MLR will accept the ".asm". The MVN executes the code, returning no exit, and the MLR creates two files, the ".lst", that describe the mounting processes and rotules in the ".asm" file, and an ".mvn", with the code to be executed by the MVN.
+
 The project also contains the implementation of an monitor to operate all the mechanism simulated in an friendly user interface.
 
 ## Motivation
@@ -17,6 +19,7 @@ The only installation needed to run is Python3
 ## Details
 
 In MVN/ there are two diagrams named logic_diagram.png and class_diagram.png that represent the implemented code. Besides the classes shown at MVN/class_diagram.png (which are each one in separate files homonymous), we have two aditional files, mvnutils.py, containing generic functions used in other files, and mvnMonitor.py, that contains the interface to run the MVN.
+
 As shown in MVN/logic_diagram.png, the MVN constains 1 LAU, 7 registers, 1 memory and many devices, those are listed and explained below:
 
 ### LAU
@@ -59,23 +62,41 @@ Only to be set when type=2, it's the mode to open the file
 Only to be set when type=3, it's the printer name on the system
 
 The MVN accepts 16 instructions, those are:
-|OPCODE|MNEMONIC|FUNCTION
+
+|OPCODE|MNEMONIC|function
+
 |0	   |JP		|Jumps to the operand address
+
 |1	   |JZ		|Jumps to the operand address if AC is 0
+
 |2	   |JN		|Jumps to the operand address if AC is negative
+
 |3	   |LV		|Load the operand to AC
+
 |4	   |+_		|Save in AC the value AC+operend
+
 |5	   |-_		|Save in AC the value AC-operend
+
 |6	   |*_		|Save in AC the value AC*operend
+
 |7	   |/_		|Save in AC the value AC/operend
+
 |8	   |LD		|Save in AC the value stored in operand address
+
 |9	   |MM		|Save in the operand address the value AC
+
 |A	   |SC		|Call subroutine in operand address
+
 |B	   |RS		|Return the subroutine that started in operand address
+
 |C	   |HM		|Halt machine
+
 |D	   |GD		|Save in AC a pair of nibbles from operand device
+
 |E	   |PD		|Send value in AC to operand device
+
 |F	   |SO		|Calls the supervisor to deal with errors
+
 
 For coding to the MVN, you may write a file (extension ".mvn" preferably) that discribes the inicial state of the memory. To do that you have to set the content of one pair of addresses per line, writing the physical address (hexadecimal between 0x0000 an 0x0FFF) and it's value (hexadecimal between 0x0000 and 0xFFFF) separated by spaces or tabs. Inserting comments (which I strongly recommend as the whole code is made of numbers) can be done with ";".
 
@@ -84,6 +105,7 @@ The MLR code is still on development, when it's finished I'll be writing the cod
 ## Executing
 
 To execute the simulator you can either deal with the MVN purely or use the mvnMonitor.
+
 To run the MVN purely you should open the Python3 terminal and import the MVN class, as following:
 
 ```
