@@ -78,10 +78,10 @@ The MVN accepts 16 instructions, those are:
 | 1 | JZ |Jumps to the operand address if AC is 0 |
 | 2 | JN |Jumps to the operand address if AC is negative |
 | 3 | LV |Load the operand to AC |
-| 4 | +_ |Save in AC the value AC+operend |
-| 5 | -_ |Save in AC the value AC-operend |
-| 6 | \* |Save in AC the value AC*operend |
-| 7 | /_ |Save in AC the value AC/operend |
+| 4 | AD |Save in AC the value AC+operend |
+| 5 | SB |Save in AC the value AC-operend |
+| 6 | ML |Save in AC the value AC*operend |
+| 7 | DV |Save in AC the value AC/operend |
 | 8 | LD |Save in AC the value stored in operand address |
 | 9 | MM |Save in the operand address the value AC |
 | A | SC |Call subroutine in operand address |
