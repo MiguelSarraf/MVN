@@ -179,6 +179,11 @@ for line in code:
 				final.append([(8*relocable+2*rotules_reloc[line[1]])*0x1000+addr, mnem_op[line[0]]*0x1000+rotules[line[1]], False])
 			else:
 				final.append([10*relocable*0x1000+addr, mnem_op[line[0]]*0x1000+get_number(line[1]), False])
+		elif not line[0] in entry_points and not line[0] in externals:
+			erro=""
+			for word in line:
+				erro+=word+" "
+			raise ValueError("Instrucao mal formulada na linha:"+erro)
 		addr+=2
 	else:
 		#symbols for defining relocability
@@ -212,6 +217,11 @@ for line in code:
 				final.append([(8*relocable+2*rotules_reloc[line[2]])*0x1000+addr, mnem_op[line[1]]*0x1000+rotules[line[2]], False])
 			else:
 				final.append([10*relocable*0x1000+addr, mnem_op[line[1]]*0x1000+get_number(line[2]), False])
+		elif not line[0] in entry_points and not line[0] in externals:
+			erro=""
+			for word in line:
+				erro+=word+" "
+			raise ValueError("Instrucao mal formulada na linha:"+erro)
 		addr+=2
 	line_n+=1
 
