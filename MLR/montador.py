@@ -101,7 +101,7 @@ for line in code:
 		ext_count+=1
 	else:
 		pass
-
+		
 #Define rotules and complete entry_points
 rotules={}
 rotules_reloc={}
@@ -113,7 +113,9 @@ for line in code:
 			relocable=line[0]=="&"
 			addr=get_number(line[1])
 		elif line[1] in [">", "<"]:
-			pass
+			if line[1]==">": 
+				rotules_reloc[line[0]]=relocable
+				entry_points[line[0]]=addr
 		elif line[0]=="$":
 			addr+=2*get_number(line[1])-2
 		else:
