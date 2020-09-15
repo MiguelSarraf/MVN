@@ -3,6 +3,7 @@ import register
 import ULA
 import device
 from mvnutils import *
+from switchcase import *
 
 '''
 This is the class for the MVN, it contains one memory 
@@ -51,37 +52,38 @@ class MVN:
 	Halt Machine.
 	If OP is logic or arithmetic calls ULA to do it'''
 	def execute(self):
-		if self.OP.get_value()==0:
+		switch(self.OP.get_value())
+		if case(0):
 			return self.jp()
-		elif self.OP.get_value() in [1,2]:
+		elif case(1) or case(2):
 			if self.ula.execute(self.OP.get_value(), self.AC.get_value()):
 				self.IC.set_value(self.OI.get_value())
 			else:
 				self.IC.set_value(self.IC.get_value()+2)
 			return True
-		elif self.OP.get_value()==3:
+		elif case(3):
 			return self.lv()
-		elif self.OP.get_value() in [4,5,6,7]:
+		elif case(4) or case(5) or case(6) or case(7):
 			self.MAR.set_value(self.OI.get_value())
 			self.get_mem()
 			self.AC.set_value(self.ula.execute(self.OP.get_value(), self.AC.get_value(), self.MDR.get_value()))
 			self.IC.set_value(self.IC.get_value()+2)
 			return True
-		elif self.OP.get_value()==8:
+		elif case(8):
 			return self.ld()
-		elif self.OP.get_value()==9:
+		elif case(9):
 			return self.mm()
-		elif self.OP.get_value()==10:
+		elif case(10):
 			return self.sc()
-		elif self.OP.get_value()==11:
+		elif case(11):
 			return self.rs()
-		elif self.OP.get_value()==12:
+		elif case(12):
 			return self.hm()
-		elif self.OP.get_value()==13:
+		elif case(13):
 			return self.gd()
-		elif self.OP.get_value()==14:
+		elif case(14):
 			return self.pd()
-		elif self.OP.get_value()==15:
+		elif case(15):
 			return self.os()
 
 	'''Makes the common cycle: fetch, decode, execute and return weather
@@ -209,19 +211,20 @@ class MVN:
 			cont+=1
 		for line in lines:
 			line=clean(line)
-			if line[0]=="0":
+			switch(int(line[0]))
+			if case(0):
 				if len(line)!=2:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(0, int(line[1])))
-			elif line[0]=="1":
+			elif case(1):
 				if len(line)!=2:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(1, int(line[1])))
-			elif line[0]=="2":
+			elif case(2):
 				if len(line)!=3:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(2, int(line[1]), printer=line[2]))
-			elif line[0]=="3":
+			elif case(3):
 				if len(line)!=4:
 					raise ValueError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(3, int(line[1]), line[2], line[3]))

@@ -1,5 +1,6 @@
 import subprocess
 from mvnutils import *
+from switchcase import *
 
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
@@ -22,19 +23,20 @@ class device:
 		self.UC=UC
 		if self.dtype==3:
 			valid_rwb(rwb)
-			if rwb=="e":
+			switch(rwb)
+			if case("e"):
 				self.file_write=open(file, "wb")
 				self.file_read=None
-			elif rwb=="l":
+			elif case("l"):
 				valid_file(file)
 				self.file_write=None
 				self.file_read=open(file, "rb")
 				self.buffer=self.file_read.read()
 				self.counter=0
-			elif rwb=="b":
+			elif case("b"):
 				valid_file(file)
 				self.file_write=open(file, "wb")
-				self.file_read=open(file, "rb")
+				self.file_read=open(file, "ab")
 				self.buffer=self.file_read.read()
 				self.counter=0
 				self.file_write.write(bytes(self.buffer, "UTF-8"))
@@ -57,14 +59,15 @@ class device:
 	def get_data(self):
 		if not self.is_readable():
 			raise ValueError("Unreadable device")
-		if self.dtype==0:
+		switch(self.dtype)
+		if case(0):
 			if len(self.buffer)<2:
 				read=input()
 				for nibble in read:
 					self.buffer.append(ord(nibble))
 				self.buffer.append(ord("\n"))
 			return self.buffer.pop(0)*0x0100+self.buffer.pop(0)
-		elif self.dtype==3:
+		elif case(3):
 			if self.counter+2>len(self.buffer):
 				print("No more data to get, returning 0x0000")
 				return 0x0000
@@ -78,15 +81,16 @@ class device:
 		if not self.is_writable():
 			raise ValueError("Unwritable device")
 		valid_value(value, MIN_VALUE, MAX_VALUE)
-		if self.dtype==1:
+		switch(self.dtype)
+		if case(1):
 			print(chr(value//0x0100)+chr(value%0x0100))
-		elif self.dtype==2:
+		elif case(2):
 			out=open("will_print.txt", "rb")
 			out.write(value//0x0100)
 			out.write(value%0x0100)
 			subprocess.run("lpr -P "+self.printer+" will_print.txt")
 			subprocess.run("rm will_print.txt")
-		elif self.dtype==3:
+		elif case(3):
 			self.file_write.write(bytes(chr(value//0x0100), "UTF-8"))
 			self.file_write.write(bytes(chr(value%0x0100), "UTF-8"))
 

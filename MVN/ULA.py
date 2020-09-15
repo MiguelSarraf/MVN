@@ -1,4 +1,5 @@
 from mvnutils import *
+from switchcase import *
 
 MIN_VALUE=0x0000
 MAX_VALUE=0xFFFF
@@ -23,17 +24,18 @@ class ULA:
 		valid_instru(op)
 		valid_value(ac, MIN_VALUE, MAX_VALUE)
 		valid_value(oi, MIN_VALUE, MAX_VALUE)
-		if op==1:
+		switch(op)
+		if case(1):
 			return self.is_zero(ac)
-		elif op==2:
+		elif case(2):
 			return self.is_neg(ac)
-		elif op==4:
+		elif case(4):
 			return self.add(ac, oi)
-		elif op==5:
+		elif case(5):
 			return self.sub(ac, oi)
-		elif op==6:
+		elif case(6):
 			return self.mul(ac, oi)
-		elif op==7:
+		elif case(7):
 			return self.div(ac, oi)
 	
 	def is_zero(self, num):
