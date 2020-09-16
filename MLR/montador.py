@@ -1,5 +1,6 @@
 import sys
 import os.path
+from switchcase import *
 
 '''Separate an given string by spaces and remove substrings with 
 no content'''
@@ -26,6 +27,7 @@ def load(name):
 	raw=file.read()
 	code=""
 	raw_mod=""
+	#Change tabs to spaces
 	while char<len(raw):
 		if raw[char]=="\t":
 			raw_mod+=" "
@@ -33,19 +35,29 @@ def load(name):
 			raw_mod+=raw[char]
 		char+=1
 	raw_mod=raw_mod.split("\n")
+	#The raw file is complete
 	code=raw_mod[:]
 	line=0
+	line_raw=1
+	#Cut off all comments, delete empty lines and raise errors 
 	while line < len(code):
 		try:
 			code[line]=code[line][:code[line].index(";")]
 		except:
 			pass
 		code[line]=clean(code[line])
-		if len(code[line])!=2:
-			if len(code[line])==0:
-				code.pop(line)
-				line-=1
+		switch(len(code[line]))
+		if case(0):
+			code.pop(line)
+			line-=1
+		#Each line has the line number in the raw code in the end of it
+		elif case([2,3]):
+			code[line].append(line_raw)
+		else:
+			raise ValueError("Instrucao mal construida na linha "+str(line_raw))
 		line+=1
+		line_raw+=1
+	#Format raw code
 	line=0
 	while line<len(raw_mod):
 		raw_mod[line]=clean(raw_mod[line])
@@ -90,77 +102,101 @@ file=sys.argv[1]
 raw, code=load(file)
 
 #Save entry_points and externals
+'''entry_points is a dictionary with entry_points names as indexes 
+	and None as values'''
+'''externals is a dictionary with externals names as indexes and
+	different succesive numbers for each external as values'''
 entry_points={}
 externals={}
 ext_count=0
 for line in code:
-	if line[1]==">":
-		entry_points[line[0]]=None
-	elif line[1]=="<":
-		externals[line[0]]=ext_count
+	switch(line[0])
+	if case(">"):
+		entry_points[line[1]]=None
+	elif case("<"):
+		externals[line[1]]=ext_count
 		ext_count+=1
-	else:
-		pass
-		
+
 #Define rotules and complete entry_points
 rotules={}
 rotules_reloc={}
 relocable=True
 addr=0
 for line in code:
-	if len(line)==2:
-		if line[0] in ["@", "&"]:
+	'''len=3 implies format [instru, operand, line_nb]
+	where instru can be @, &, $, <, >, operation'''
+	if len(line)==3:
+		switch(line[0])
+		#Change address relocability
+		if case(["@", "&"]):
 			relocable=line[0]=="&"
 			addr=get_number(line[1])
-		elif line[1] in [">", "<"]:
-			if line[1]==">": 
-				rotules_reloc[line[0]]=relocable
-				entry_points[line[0]]=addr
-		elif line[0]=="$":
-			addr+=2*get_number(line[1])-2
+		#Entry points and externals were already processed
+		elif case(">") or case("<"):
+			pass
+		#Reserve memory
+		elif case("$"):
+			addr+=2*get_number(line[1])
+		#Increment address
+		else:
+			addr+=2
+	'''len=4 implies format [rotule, instu, operand, line_nb]
+	where instu can be $, operation'''
+	elif len(line)==4:
+		#Save rotule, it's address and relocability
+		rotules[line[0]]=addr
+		rotules_reloc[line[0]]=relocable
+		#Assign address to entry point
+		if line[0] in entry_points:
+			entry_points[line[0]]=addr
+		switch(line[1])
+		#Reserve memory
+		if case("$"):
+			addr+=2*get_number(line[2])
+		#Increment address
 		else:
 			addr+=2
 	else:
-		rotules[line[0]]=addr
-		rotules_reloc[line[0]]=relocable
-		if line[0] in entry_points:
-			entry_points[line[0]]=addr
-		elif line[1]=="$":
-			addr+=2*get_number(line[2])
-		elif line[1] in ["@", "&"]:
-			relocable=line[1]=="&"
-			addr=get_number(line[2])
-		else:
-			addr+=2
+		raise ValueError("Instrucao mal formulada na linha "+str(line[-1]))
+#Check if all entry points where assigned, raise error
+for entry in entry_points:
+	if entry_points[entry]==None:
+		raise ValueError("Entry point "+entry+" foi indicado, mas não definido")
 
 #Insert entry_points and externals in final code
+'''First nibble of the address has the following composition:
+[addr relocability][o resolution][op relocability][op location]
+  0=abs   1=reloc ||0=res 1=nres||0=abs  1=reloc ||0=in  1=out
+Boolean in the last position identify if it is external or entry_point'''
 final=[]
 for ext in externals:
+	#externals have addr abs, operand n resol, reloc and loc unknown (0)
 	final.append([0x4000+externals[ext], 0x0000, True])
 for ep in entry_points:
+	#entry points have addr abs, operand resolved, reloc dependent and in
 	final.append([rotules_reloc[ep]*0x2000+entry_points[ep], 0x0000, True])
 
 #Pass through the code defining addresses and translating
-'''First nibble of the address has the following composition:
-[addr relocability][o resolution][op relocability][op location]
-  0=abs   1=reloc ||0=res 1=nres||0=abs  1=reloc ||0=in  1=out'''
 addr=0
 relocable=True
 end=False
 line_n=0
 for line in code:
-	if len(line)==2:
+	if len(line)==3:
+		switch(line[0])
 		#symbols for defining relocability
-		if line[0] in ["@", "&"]:
+		if case(["@", "&"]):
 			relocable=line[0]=="&"
 			addr=get_number(line[1])-2
 		#symbol for defining constants
-		elif line[0]=="K":
+		elif case("K"):
+			#addr reloc dependent, operand resolved, abs and in
 			final.append([8*relocable*0x1000+addr, get_number(line[1]), False])
 		#symbol for reserving space
-		elif line[0]=="$":
+		elif case("$"):
 			n=get_number(line[1])
 			for i in range(n):
+				#addr reloc dependent, operand resolved, abs and in
 				final.append([8*relocable*0x1000+addr, 0, False])
 				addr+=2
 			new_raw=raw[:line_n+2]
@@ -170,35 +206,39 @@ for line in code:
 			line_n+=n-1
 			addr-=2
 		#symbol for ending code
-		elif line[0]=="#":
+		elif case("#"):
 			end=True
 			break
 		#symbols for instructions
-		elif line[0] in mnem_op:
-			if line[1] in externals:
+		elif case(mnem_op):
+			switch(line[1])
+			if case(externals):
+				#addr reloc dependent, operand n resolved, abs and out
 				final.append([(8*relocable+5)*0x1000+addr, mnem_op[line[0]]*0x1000+externals[line[1]], False])
-			elif line[1] in rotules:
+			elif case(rotules):
+				#addr reloc dependent, operand resolved, reloc dependent and in
 				final.append([(8*relocable+2*rotules_reloc[line[1]])*0x1000+addr, mnem_op[line[0]]*0x1000+rotules[line[1]], False])
 			else:
+				#addr reloc dependent, operand resolved, reloc dependent and in
 				final.append([10*relocable*0x1000+addr, mnem_op[line[0]]*0x1000+get_number(line[1]), False])
-		elif not line[0] in entry_points and not line[0] in externals:
-			erro=""
-			for word in line:
-				erro+=word+" "
-			raise ValueError("Instrucao mal formulada na linha:"+erro)
+		elif not case("<") and not case(">"):
+			raise ValueError("Instrucao mal formulada na linha "+str(line[-1]))
 		addr+=2
-	else:
+	elif len(line)==4:
+		switch(line[1])
 		#symbols for defining relocability
-		if line[1] in ["@", "&"]:
+		if case(["@", "&"]):
 			relocable=line[1]=="&"
 			addr=get_number(line[2])-2
 		#symbol for defining constants
-		elif line[2]=="K":
+		elif case("K"):
+			#addr reloc dependent, operand resolved, abs and in
 			final.append([8*relocable*0x1000+addr, get_number(line[2]), False])
 		#symbol for reserving space
-		elif line[1]=="$":
+		elif case("$"):
 			n=get_number(line[2])
 			for i in range(n):
+				#addr reloc dependent, operand resolved, abs and in
 				final.append([8*relocable*0x1000+addr, 0, False])
 				addr+=2
 			new_raw=raw[:line_n+2]
@@ -208,22 +248,22 @@ for line in code:
 			line_n+=n-1
 			addr-=2
 		#symbol for ending code
-		elif line[1]=="#":
+		elif case("#"):
 			end=True
 			break
 		#symbols for instructions
-		elif line[1] in mnem_op:
+		elif case(mnem_op):
 			if line[2] in externals:
+				#addr reloc dependent, operand n resolved, abs and out
 				final.append([(8*relocable+5)*0x1000+addr, mnem_op[line[1]]*0x1000+externals[line[2]], False])
 			elif line[2] in rotules:
+				#addr reloc dependent, operand resolved, reloc dependent and in
 				final.append([(8*relocable+2*rotules_reloc[line[2]])*0x1000+addr, mnem_op[line[1]]*0x1000+rotules[line[2]], False])
 			else:
+				#addr reloc dependent, operand resolved, reloc dependent and in
 				final.append([10*relocable*0x1000+addr, mnem_op[line[1]]*0x1000+get_number(line[2]), False])
-		elif not line[0] in entry_points and not line[0] in externals:
-			erro=""
-			for word in line:
-				erro+=word+" "
-			raise ValueError("Instrucao mal formulada na linha:"+erro)
+		else:
+			raise ValueError("Instrucao mal formulada na linha "+str(line[-1]))
 		addr+=2
 	line_n+=1
 
