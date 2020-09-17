@@ -182,6 +182,21 @@ class MVN:
 	'''Send AC to the supervisor
 	IC:=IC+1'''
 	def os(self):
+		switch(self.AC.get_value())
+		if case(0):
+			print("OK")
+		elif case(1):
+			print("ER:JOB")
+		elif case(2):
+			print("ER:CMD")
+		elif case(3):
+			print("ER:ARG")
+		elif case(4):
+			print("ER:END")
+		elif case(5):
+			print("ER:EXE")
+		else:
+			print("Erro deconhecido. Código: "+str(self.AC.get_value))
 		print("Error number "+hex(self.AC.get_value()))
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
