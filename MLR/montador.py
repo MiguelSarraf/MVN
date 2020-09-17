@@ -125,6 +125,8 @@ addr=0
 for line in code:
 	'''len=3 implies format [instru, operand, line_nb]
 	where instru can be @, &, $, <, >, operation'''
+	'''len=4 implies format [rotule, instu, operand, line_nb]
+	where instu can be $, operation'''
 	if len(line)==3:
 		switch(line[0])
 		#Change address relocability
@@ -140,8 +142,6 @@ for line in code:
 		#Increment address
 		else:
 			addr+=2
-	'''len=4 implies format [rotule, instu, operand, line_nb]
-	where instu can be $, operation'''
 	elif len(line)==4:
 		#Save rotule, it's address and relocability
 		rotules[line[0]]=addr
