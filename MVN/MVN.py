@@ -195,16 +195,18 @@ class MVN:
 			print("ER:END")
 		elif case(5):
 			print("ER:EXE")
-		elif case(0x2319):
+		elif case(2319):
 			print("2319! Temos um 2319!")
-		elif case(0x404):
+		elif case(404):
 			print("404! Erro não encontrado.")
-		elif case(0x66):
+		elif case(66):
 			print("Execute o erro 66!")
-		elif case(7783):
-			print("Obriagado pela lembrança, o autor agradece!  =)")
+		elif case(88):
+			print("Cuidado amigo!!! Indo rápido desse jeito você pode acabar viajando no tempo")
+		elif case(42):
+			print("Também fiquei triste com a resposta do Pensador Profundo. Tomara que a Terra já esteja terminando seu trabalho.")
 		else:
-			print("Erro deconhecido. Código: "+str(self.AC.get_value))
+			print("Erro desconhecido. Código "+str(self.AC.get_value))
 		print("Error number "+hex(self.AC.get_value()))
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
