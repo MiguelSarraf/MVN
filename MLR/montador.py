@@ -267,6 +267,10 @@ for line in code:
 		addr+=2
 	line_n+=1
 
+#Check if user ended code
+if not end:
+	raise ValueError("O código não foi terminado, insira a pseudo-instrução '#' na última linha de seu código")
+
 #Erase line with relocability data from code
 line=0
 while line < len(code):
@@ -291,7 +295,11 @@ line_code=0
 line_final=0
 for line in range(len(raw)):
 	exit=""
-	if raw[line][0]==code[line_code][0] or raw[line][0]==0:
+	if len(raw[line])==0:
+		pass
+	elif raw[line][0]==code[line_code][0] or raw[line][0]==0:
+		if code[line_code][0]=="#" or code[line_code][1]=="#":
+			break
 		exit=hex(final[line_final][0])[2:].zfill(4)+" "+hex(final[line_final][1])[2:].zfill(4)+" ; "
 		for word in raw[line]:
 			if word!=0: exit+=word+" "
