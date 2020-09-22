@@ -207,7 +207,6 @@ class MVN:
 			print("Também fiquei triste com a resposta do Pensador Profundo. Tomara que a Terra já esteja terminando seu trabalho.")
 		else:
 			print("Erro desconhecido. Código "+str(self.AC.get_value))
-		print("Error number "+hex(self.AC.get_value()))
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 

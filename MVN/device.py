@@ -54,15 +54,15 @@ class device:
 	def is_writable(self):
 		return self.dtype==1 or self.dtype==2 or self.dtype==3 and self.file_write!=None
 
-'''
-             .-.
-       ..==./xxx\
-      /<<<<<\    |
-      \>>>>>/xxxx/--.
-       `'==''---; * *`\
-                \* * */
-                 '--'`
-'''
+	'''
+	             .-.
+	       ..==./xxx\
+	      /<<<<<\    |
+	      \>>>>>/xxxx/--.
+	       `'==''---; * *`\
+	                \* * */
+	                 '--'`
+	'''
 
 	'''Get data from the device and return it, the limit to be 
 	returned is one byte (or two nibbles)'''
