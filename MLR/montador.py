@@ -75,7 +75,8 @@ num_format={"/":16,
 returns the correspondent integer to the type passed'''
 def get_number(num):
 	if num_format[num[0]]=="ASCII":
-		return ord(num[1:])
+		if len(num[1:])==1:	return ord(num[1:])
+		else: return ord(num[1])*0x100+ord(num[2])
 	else:
 		return int(num[1:], num_format[num[0]])
 
@@ -109,12 +110,15 @@ raw, code=load(file)
 entry_points={}
 externals={}
 ext_count=0
+final=[]
 for line in code:
 	switch(line[0])
 	if case(">"):
 		entry_points[line[1]]=None
+		final.append(line[1])
 	elif case("<"):
 		externals[line[1]]=ext_count
+		final.append(line[1])
 		ext_count+=1
 
 #Define rotules and complete entry_points
@@ -163,18 +167,20 @@ for entry in entry_points:
 	if entry_points[entry]==None:
 		raise ValueError("Entry point "+entry+" foi indicado, mas não definido")
 
-#Insert entry_points and externals in final code
+#Insert entry_points and externals values in final
 '''First nibble of the address has the following composition:
 [addr relocability][o resolution][op relocability][op location]
   0=abs   1=reloc ||0=res 1=nres||0=abs  1=reloc ||0=in  1=out
 Boolean in the last position identify if it is external or entry_point'''
-final=[]
-for ext in externals:
-	#externals have addr abs, operand n resol, reloc and loc unknown (0)
-	final.append([0x4000+externals[ext], 0x0000, True])
-for ep in entry_points:
-	#entry points have addr abs, operand resolved, reloc dependent and in
-	final.append([rotules_reloc[ep]*0x2000+entry_points[ep], 0x0000, True])
+line=0
+while line < len(final):
+	if final[line] in externals:
+		#externals have addr abs, operand n resol, reloc and loc unknown (0)
+		final[line]=[0x4000+externals[final[line]], 0x0000, True]
+	elif final[line] in entry_points:
+		#entry points have addr abs, operand resolved, reloc dependent and in
+		final[line]=[rotules_reloc[final[line]]*0x2000+entry_points[final[line]], 0x0000, True]
+	line+=1
 
 #Pass through the code defining addresses and translating
 addr=0
@@ -284,7 +290,16 @@ while line < len(code):
 mvn_file=open(file[:file.index(".")]+".mvn", "w")
 for line in final:
 	if line[2]:
-		mvn_file.write(hex(line[0])[2:].zfill(4)+" "+hex(line[1])[2:].zfill(4)+" ; '"+code[final.index(line)][0]+" "+code[final.index(line)][1]+"'\n")
+		if hex(line[0])[2:].zfill(4)[0]=="4":
+			for ext in externals:
+				if externals[ext]==int(hex(line[0])[2:].zfill(4)[1:],16): 
+					mvn_file.write(hex(line[0])[2:].zfill(4)+" "+hex(line[1])[2:].zfill(4)+" ; '< "+ext+"'\n")
+					break
+		else:
+			for ent in entry_points:
+				if entry_points[ent]==int(hex(line[0])[2:].zfill(4)[1:],16): 
+					mvn_file.write(hex(line[0])[2:].zfill(4)+" "+hex(line[1])[2:].zfill(4)+" ; '> "+ent+"'\n")
+					break
 	else:
 		mvn_file.write(hex(line[0])[2:].zfill(4)+" "+hex(line[1])[2:].zfill(4)+"\n")
 mvn_file.close()
