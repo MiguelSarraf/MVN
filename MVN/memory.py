@@ -18,7 +18,7 @@ class memory:
 	def __init__(self, value=0x0000):
 		valid_value(value, MIN_VALUE, MAX_VALUE)
 		self.map=[]
-		for cont in range(MAX_ADDR//2):
+		for cont in range(MAX_ADDR//2+1):
 			self.map.append(address.address(2*cont, value//0x100))
 			self.map.append(address.address(2*cont+1, value-(value//0x100)*0x100))
 

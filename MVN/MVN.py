@@ -180,10 +180,10 @@ class MVN:
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
-	'''Send AC to the supervisor
+	'''Send OI to the supervisor
 	IC:=IC+1'''
 	def os(self):
-		switch(self.AC.get_value())
+		switch(self.OI.get_value())
 		if case(0):
 			print("OK")
 		elif case(1):
@@ -225,7 +225,7 @@ class MVN:
 		elif case(2001):
 			print("Desculpe Dave, estou com medo e não posso fazer isso.")
 		else:
-			print("Erro desconhecido. Código "+str(self.AC.get_value))
+			print("Erro desconhecido. Código "+str(self.OI.get_value))
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
