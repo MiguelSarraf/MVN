@@ -24,3 +24,5 @@ class address:
 
 	def get_value(self):
 		return self.value
+
+#What a curious man you are, here's another easter egg for you.

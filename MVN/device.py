@@ -54,6 +54,16 @@ class device:
 	def is_writable(self):
 		return self.dtype==1 or self.dtype==2 or self.dtype==3 and self.file_write!=None
 
+	'''
+	             .-.
+	       ..==./xxx\
+	      /<<<<<\    |
+	      \>>>>>/xxxx/--.
+	       `'==''---; * *`\
+	                \* * */
+	                 '--'`
+	'''
+
 	'''Get data from the device and return it, the limit to be 
 	returned is one byte (or two nibbles)'''
 	def get_data(self):
@@ -122,3 +132,7 @@ class device:
 		print("   Monitor    -> 1")
 		print("   Impressora -> 2")
 		print("   Disco      -> 3")
+
+
+
+#Easter eggs taken from https://www.oocities.org/spunk1111/easter.htm

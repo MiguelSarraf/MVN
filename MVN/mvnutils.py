@@ -42,3 +42,5 @@ def clean(line):
 		if word!="":
 			res.append(word)
 	return res
+
+#Really? You had to check this methods???
