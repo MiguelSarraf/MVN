@@ -27,6 +27,7 @@ class MVN:
 		self.OP=register.register()
 		self.OI=register.register()
 		self.AC=register.register()
+		self.STPTR=register.register(value=0x0ffe)
 		self.ula=ULA.ULA()
 		self.devs=[]
 		self.devs.append(device.device(0,0))
@@ -195,6 +196,22 @@ class MVN:
 			print("ER:END")
 		elif case(5):
 			print("ER:EXE")
+		elif case(0x10):
+			#Get pointer
+			self.AC.set_value(self.STPTR.get_value())
+		elif case(0x11):
+			#Set pointer
+			self.STPTR.set_value(self.AC.get_value())
+		elif case(0x12):
+			#Get stacktop
+			self.MAR.set_value(self.STPTR.get_value())
+			self.get_mem()
+			self.AC.set_value(self.MDR.get_value())
+		elif case(0x13):
+			#Set stacktop
+			self.MAR.set_value(self.STPTR.get_value())
+			self.MDR.set_value(self.AC.get_value())
+			self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
 		elif case(2319):
 			print("2319! Temos um 2319!")
 		elif case(404):
@@ -205,6 +222,8 @@ class MVN:
 			print("Cuidado amigo!!! Indo rápido desse jeito você pode acabar viajando no tempo")
 		elif case(42):
 			print("Também fiquei triste com a resposta do Pensador Profundo. Tomara que a Terra já esteja terminando seu trabalho.")
+		elif case(2001):
+			print("Desculpe Dave, estou com medo e não posso fazer isso.")
 		else:
 			print("Erro desconhecido. Código "+str(self.AC.get_value))
 		self.IC.set_value(self.IC.get_value()+2)
