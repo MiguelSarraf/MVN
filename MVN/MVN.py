@@ -27,7 +27,7 @@ class MVN:
 		self.OP=register.register()
 		self.OI=register.register()
 		self.AC=register.register()
-		self.STPTR=register.register(value=0x0ffe)
+		self.SP=0x0ffe
 		self.ula=ULA.ULA()
 		self.devs=[]
 		self.devs.append(device.device(0,0))
@@ -98,6 +98,10 @@ class MVN:
 	def get_mem(self):
 		self.MDR.set_value(self.mem.get_value(self.MAR.get_value()))
 
+	#Set memory value
+	def set_mem(self):
+		self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
+
 	#IC:=OI
 	def jp(self):
 		self.IC.set_value(self.OI.get_value())
@@ -128,7 +132,7 @@ class MVN:
 	def mm(self):
 		self.MAR.set_value(self.OI.get_value())
 		self.MDR.set_value(self.AC.get_value())
-		self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
+		self.set_mem()
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
@@ -139,7 +143,7 @@ class MVN:
 	def sc(self):
 		self.MAR.set_value(self.OI.get_value())
 		self.MDR.set_value(self.IC.get_value()+2)
-		self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
+		self.set_mem()
 		self.IC.set_value(self.OI.get_value()+2)
 		return True
 
@@ -205,26 +209,34 @@ class MVN:
 		elif case(0x10):
 			#Get pointer
 			if self.OP.get_value()!=1: self.os_error(1,self.OP.get_value())
-			self.AC.set_value(self.STPTR.get_value())
+			self.MAR.set_value(self.SP)
+			self.get_mem()
+			self.AC.set_value(self.MDR.get_value())
 		elif case(0x11):
 			#Set pointer
 			if self.OP.get_value()!=1: self.os_error(1,self.OP.get_value())
 			self.MAR.set_value(self.MAR.get_value()-2)
 			self.get_mem()
-			self.STPTR.set_value(self.MDR.get_value())
+			self.MAR.set_value(self.SP)
+			self.set_mem()
 		elif case(0x12):
 			#Get stacktop
 			if self.OP.get_value()!=1: self.os_error(1,self.OP.get_value())
-			self.MAR.set_value(self.STPTR.get_value())
+			self.MAR.set_value(self.SP)
+			self.get_mem()
+			self.MAR.set_value(self.MDR.get_value())
 			self.get_mem()
 			self.AC.set_value(self.MDR.get_value())
 		elif case(0x13):
 			#Set stacktop
 			if self.OP.get_value()!=1: self.os_error(1,self.OP.get_value())
+			self.MAR.set_value(self.SP)
+			self.get_mem()
+			self.AC.set_value(self.MDR.get_value())
 			self.MAR.set_value(self.MAR.get_value()-2)
 			self.get_mem()
-			self.MAR.set_value(self.STPTR.get_value())
-			self.mem.set_value(self.MAR.get_value(), self.MDR.get_value())
+			self.MAR.set_value(self.AC.get_value())
+			self.set_mem()
 		elif case(2319):
 			if self.OP.get_value()!=0: self.os_error(0,self.OP.get_value())
 			print("2319! Temos um 2319!")
@@ -258,9 +270,7 @@ class MVN:
 	this to memory'''
 	def set_memory(self, guide):
 		for data in guide:
-			self.mem.set_value(int(data[0], 16), int(data[1], 16))
-
-	#Show memory values for addresses between start and stop
+			self.set_mem(w memory values for addresses between start and stop
 	def dump_memory(self, start, stop):
 		self.mem.show(start, stop)
 
