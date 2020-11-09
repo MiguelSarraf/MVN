@@ -26,7 +26,7 @@ Besides that, the libraries used are:
 
 In MVN/ there are two diagrams named logic_diagram.png and class_diagram.png that represent the implemented code. Besides the classes shown at MVN/class_diagram.png (which are each one in separate files homonymous), we have three aditional files, mvnutils.py, containing generic functions used in other files, switchcase.py, that implements a simple switch/case used in many places, and mvnMonitor.py, that contains the interface to run the MVN.
 
-As shown in MVN/logic_diagram.png, the MVN constains 1 LAU, 8 registers, 1 memory and many devices, those are listed and explained below:
+As shown in MVN/logic_diagram.png, the MVN constains 1 LAU, 7 registers, 1 memory and many devices, those are listed and explained below:
 
 ### LAU
 The LAU in MVN has 6 functions in it:
@@ -45,7 +45,6 @@ The register have simple functionalities (only gets and sets), they have the fol
 - OI: Operand Instruction, it saves the operand of the instruction
 - AC: ACmulator, register that is used to save values gotten from various places
 - IC: Instruction Counter, it is used to save the address of the next instruction
-- STPTR: Stack Pointer, it is used to operate with the stack
 ### Memory
 The MVN memory is composed of 0xFFF addresses, the address work the same way as the registers, and can be accessed by pairs of addresses.
 ### Devices
@@ -106,7 +105,7 @@ XXXX is the address you're setting, it's value is between 0x0000 and 0x0FFF.
 
 IPPP is the value to be stored in the address, it's between 0x0000 and 0xFFFF, the most significant nibble, I, is the instruction to be executed and the other three, PPP, is the operand.
 
-To use the stack you should use the OS function, the code 0x10 will place STPTTR in AC, 0x11 will place AC in STPTR, 0x12 will place the value stored in STPTR address in AC and 0x13 will place AC in STPTR address.
+There is also an stack implemented, the stack pointer (SP) is in address 0x0ffe. To use the stack you should use the OS function, the code 0x10 will place SP in AC, 0x11 will place AC in SP, 0x12 will place the value stored in STPTR address in AC and 0x13 will place AC in SP address.
 
 There is also a "mvn.config" file you can set to configure the infinite loop prevention. The code will exit after the number of steps taken exceed max_step (default to 10000), to set it in config file, write a line like: "max_step=[value]" where value is the number of max_step you want to set.
 
