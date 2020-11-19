@@ -270,7 +270,7 @@ class MVN:
 	this to memory'''
 	def set_memory(self, guide):
 		for data in guide:
-			self.set_mem(w memory values for addresses between start and stop
+			self.mem.set_value(int(data[0], 16), int(data[1], 16))
 	def dump_memory(self, start, stop):
 		self.mem.show(start, stop)
 
