@@ -231,7 +231,7 @@ class MVN:
 			switch(self.AC.get_value())
 			if case(0):
 				#Get pointer
-				if self.OP.get_value()//0x100!=0: self.os_error(1,self.OP.get_value()//0x100)
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
 				self.MAR.set_value(self.SP)
 				self.get_mem()
 				self.AC.set_value(self.MDR.get_value())
@@ -244,7 +244,7 @@ class MVN:
 				self.set_mem()
 			elif case(2):
 				#Get stacktop
-				if self.OP.get_value()//0x100!=0: self.os_error(1,self.OP.get_value()//0x100)
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
 				self.MAR.set_value(self.SP)
 				self.get_mem()
 				self.MAR.set_value(self.MDR.get_value())
