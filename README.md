@@ -110,7 +110,7 @@ The supervisor operand is interpreted as follows:
 XXXX FAOO
 ```
 
-XXXX is the address, F is the instruction for the supervisor, A is the number os arguments to be passed and OO is the operation the supervisor must execute. The arguments are written in the lines preceeding. Hence the code with 2 arguments should look like:
+XXXX is the address, F is the instruction for the supervisor, A is the number os arguments to be passed and OO is the operation the supervisor must execute. The only operations implemented for supervisor are 0xEE, which prints error messages depending on the value on the acumulator, and 0x57, which operates the staack (full decription above). The arguments are written in the lines preceeding. Hence the code with 2 arguments should look like:
 
 ```
 0AAA 0XXX
@@ -119,7 +119,7 @@ XXXX is the address, F is the instruction for the supervisor, A is the number os
 0XXX F2OO
 ```
 
-There is also an stack implemented, the stack pointer (SP) is in address 0x0ffe. To use the stack you should use the OS function, the code 0x10 will place SP in AC, 0x11 will place AC in SP, 0x12 will place the value stored in STPTR address in AC and 0x13 will place AC in SP address.
+The stack implemented has its stack pointer (SP) is in address 0x0ffe. To use the stack you should use the OS function, the code (passed via AC) 0 will place SP in AC, 1 will place AC in SP, 2 will place the value stored in STPTR address in AC and 3 will place AC in SP address.
 
 There is also a "mvn.config" file you can set to configure the infinite loop prevention. The code will exit after the number of steps taken exceed max_step (default to 10000), to set it in config file, write a line like: "max_step=[value]" where value is the number of max_step you want to set.
 

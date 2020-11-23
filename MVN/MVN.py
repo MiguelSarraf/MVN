@@ -187,77 +187,83 @@ class MVN:
 	'''Send OI to the supervisor
 	IC:=IC+1'''
 	def os(self):
-		switch(self.OP.get_value()-(self.OP.get_value()//0x100)*0x100)
-		if case(0):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("OK")
-		elif case(1):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("ER:JOB")
-		elif case(2):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("ER:CMD")
-		elif case(3):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("ER:ARG")
-		elif case(4):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("ER:END")
-		elif case(5):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("ER:EXE")
-		elif case(0x10):
-			#Get pointer
-			if self.OP.get_value()//0x100!=1: self.os_error(1,self.OP.get_value())
-			self.MAR.set_value(self.SP)
-			self.get_mem()
-			self.AC.set_value(self.MDR.get_value())
-		elif case(0x11):
-			#Set pointer
-			if self.OP.get_value()//0x100!=1: self.os_error(1,self.OP.get_value())
-			self.MAR.set_value(self.MAR.get_value()-2)
-			self.get_mem()
-			self.MAR.set_value(self.SP)
-			self.set_mem()
-		elif case(0x12):
-			#Get stacktop
-			if self.OP.get_value()//0x100!=0: self.os_error(1,self.OP.get_value())
-			self.MAR.set_value(self.SP)
-			self.get_mem()
-			self.MAR.set_value(self.MDR.get_value())
-			self.get_mem()
-			self.AC.set_value(self.MDR.get_value())
-		elif case(0x13):
-			#Set stacktop
-			if self.OP.get_value()//0x100!=1: self.os_error(1,self.OP.get_value())
-			self.MAR.set_value(self.SP)
-			self.get_mem()
-			self.AC.set_value(self.MDR.get_value())
-			self.MAR.set_value(self.MAR.get_value()-2)
-			self.get_mem()
-			self.MAR.set_value(self.AC.get_value())
-			self.set_mem()
-		elif case(2319):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("2319! Temos um 2319!")
-		elif case(404):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("404! Erro não encontrado.")
-		elif case(66):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("Execute o erro 66!")
-		elif case(88):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("Cuidado amigo!!! Indo rápido desse jeito você pode acabar viajando no tempo")
-		elif case(42):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("Também fiquei triste com a resposta do Pensador Profundo. Tomara que a Terra já esteja terminando seu trabalho.")
-		elif case(2001):
-			if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value())
-			print("Desculpe Dave, estou com medo e não posso fazer isso.")
+		if self.OP.get_value()-0x100(self.OP.get_value()//0x100)==0xEE:
+			switch(self.AC.get_value())
+			if case(0):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("OK")
+			elif case(1):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("ER:JOB")
+			elif case(2):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("ER:CMD")
+			elif case(3):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("ER:ARG")
+			elif case(4):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("ER:END")
+			elif case(5):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("ER:EXE")
+			elif case(2319):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("2319! Temos um 2319!")
+			elif case(404):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("404! Erro não encontrado.")
+			elif case(66):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("Execute o erro 66!")
+			elif case(88):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("Cuidado amigo!!! Indo rápido desse jeito você pode acabar viajando no tempo")
+			elif case(42):
+				if self.OP.get_value()//0x100!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("Também fiquei triste com a resposta do Pensador Profundo. Tomara que a Terra já esteja terminando seu trabalho.")
+			elif case(2001):
+				if self.OP.get_value()!=0: self.os_error(0,self.OP.get_value()//0x100)
+				print("Desculpe Dave, estou com medo e não posso fazer isso.")
+			else:
+				print("Erro desconhecido. Código "+str(self.OP.get_value()//0x100))
+		elif self.OP.get_value()-0x100(self.OP.get_value()//0x100)==0x57:
+			switch(self.AC.get_value())
+			if case(0):
+				#Get pointer
+				if self.OP.get_value()//0x100!=0: self.os_error(1,self.OP.get_value()//0x100)
+				self.MAR.set_value(self.SP)
+				self.get_mem()
+				self.AC.set_value(self.MDR.get_value())
+			elif case(1):
+				#Set pointer
+				if self.OP.get_value()//0x100!=1: self.os_error(1,self.OP.get_value()//0x100)
+				self.MAR.set_value(self.MAR.get_value()-2)
+				self.get_mem()
+				self.MAR.set_value(self.SP)
+				self.set_mem()
+			elif case(2):
+				#Get stacktop
+				if self.OP.get_value()//0x100!=0: self.os_error(1,self.OP.get_value()//0x100)
+				self.MAR.set_value(self.SP)
+				self.get_mem()
+				self.MAR.set_value(self.MDR.get_value())
+				self.get_mem()
+				self.AC.set_value(self.MDR.get_value())
+			elif case(3):
+				#Set stacktop
+				if self.OP.get_value()//0x100!=1: self.os_error(1,self.OP.get_value()//0x100)
+				self.MAR.set_value(self.SP)
+				self.get_mem()
+				self.AC.set_value(self.MDR.get_value())
+				self.MAR.set_value(self.MAR.get_value()-2)
+				self.get_mem()
+				self.MAR.set_value(self.AC.get_value())
+				self.set_mem()		self.IC.set_value(self.IC.get_value()+2)
+			else:
+				print("Instrução desconhecida. Código "+str(self.OP.get_value()//0x100))
 		else:
-			print("Erro desconhecido. Código "+str(self.OI.get_value))
-		self.IC.set_value(self.IC.get_value()+2)
+			print("Operação desconhecida. Código "+str(self.OP.get_value()-0x100(self.OP.get_value()//0x100)))
 		return True
 
 	def os_error(self, expected, passed):
