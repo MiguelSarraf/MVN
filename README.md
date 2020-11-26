@@ -110,7 +110,7 @@ The supervisor operand is interpreted as follows:
 XXXX FAOO
 ```
 
-XXXX is the address, F is the instruction for the supervisor, A is the number os arguments to be passed and OO is the operation the supervisor must execute. The only operations implemented for supervisor are 0xEE, which prints error messages depending on the value on the acumulator, and 0x57, which operates the staack (full decription above). The arguments are written in the lines preceeding. Hence the code with 2 arguments should look like:
+XXXX is the address, F is the instruction for the supervisor, A is the number os arguments to be passed and OO is the operation the supervisor must execute. The only operations implemented for supervisor are 0xEE, which prints error messages depending on the value on the acumulator, 0xEF, which runs an secondary code in memory and returns main execution when it halts, and 0x57, which operates the staack (full decription above). The arguments are written in the lines preceeding. Hence the code with 2 arguments should look like:
 
 ```
 0AAA 0XXX

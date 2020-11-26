@@ -101,8 +101,8 @@ class device:
 			subprocess.run("lpr -P "+self.printer+" will_print.txt")
 			subprocess.run("rm will_print.txt")
 		elif case(3):
-			self.file_write.write(bytes(chr(value//0x0100), "UTF-8"))
-			self.file_write.write(bytes(chr(value%0x0100), "UTF-8"))
+			self.file_write.write((value//0x0100).to_bytes(1,byteorder="big"))
+			self.file_write.write((value%0x0100).to_bytes(1,byteorder="big"))
 
 	#Ends up the device
 	def terminate(self):
