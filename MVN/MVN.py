@@ -180,7 +180,7 @@ class MVN:
 			if self.OI.get_value()//0x0100==dev.get_type() and self.OI.get_value()%0x0100==dev.get_UC():
 				self.AC.set_value(dev.get_data())
 				nfound=False
-		if nfound: raise ValueError("Dispositivo não existe")
+		if nfound: raise MVNError("Dispositivo não existe")
 		self.IC.set_value(self.IC.get_value()+2)
 		return True	
 
@@ -193,7 +193,7 @@ class MVN:
 				dev.put_data(self.AC.get_value())
 				err+=1
 		if err==len(self.devs):
-			raise ValueError("Dispositivo não existe")
+			raise MVNError("Dispositivo não existe")
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
 
@@ -285,7 +285,7 @@ class MVN:
 		return True
 
 	def os_error(self, expected, passed):
-		raise ValueError(str(expected)+" arguments expecteds, "+str(passed)+" passed.")
+		raise MVNError(str(expected)+" arguments expecteds, "+str(passed)+" passed.")
 
 	def print_state(self):
 		return hex(self.MAR.get_value())[2:].zfill(4)+" "+hex(self.MDR.get_value())[2:].zfill(4)+" "+hex(self.IC.get_value())[2:].zfill(4)+" "+hex(self.IR.get_value())[2:].zfill(4)+" "+hex(self.OP.get_value())[2:].zfill(4)+" "+hex(self.OI.get_value())[2:].zfill(4)+" "+hex(self.AC.get_value())[2:].zfill(4)
@@ -313,19 +313,19 @@ class MVN:
 			switch(int(line[0]))
 			if case(0):
 				if len(line)!=2:
-					raise ValueError("'disp.lst' file badly formulated")
+					raise MVNError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(0, int(line[1])))
 			elif case(1):
 				if len(line)!=2:
-					raise ValueError("'disp.lst' file badly formulated")
+					raise MVNError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(1, int(line[1])))
 			elif case(2):
 				if len(line)!=3:
-					raise ValueError("'disp.lst' file badly formulated")
+					raise MVNError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(2, int(line[1]), printer=line[2]))
 			elif case(3):
 				if len(line)!=4:
-					raise ValueError("'disp.lst' file badly formulated")
+					raise MVNError("'disp.lst' file badly formulated")
 				self.devs.append(device.device(3, int(line[1]), line[2], line[3]))
 
 	#Print the devices on device list
@@ -342,7 +342,7 @@ class MVN:
 	def new_dev(self, dtype, UC, file=None, rwb=None, printer=None):
 		for dev in self.devs:
 			if dev.get_type()==dtype and dev.get_UC()==UC:
-				raise ValueError("Device ja existe")
+				raise MVNError("Device ja existe")
 		self.devs.append(device.device(dtype, UC, file, rwb, printer))
 
 	#Remove specified device

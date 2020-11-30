@@ -38,7 +38,7 @@ class memory:
 		valid_value(start, MIN_ADDR, MAX_ADDR)
 		valid_value(stop, MIN_ADDR, MAX_ADDR)
 		if start>stop:
-			raise ValueError("Uncompatible values")
+			raise MVNError("Uncompatible values")
 		if arq!=None: file=open(arq, "w")
 		else:
 			print("       00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F  ")
