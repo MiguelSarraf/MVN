@@ -123,7 +123,7 @@ The stack implemented has its stack pointer (SP) is in address 0x0ffe. To use th
 
 There is also a "mvn.config" file you can set to configure the infinite loop prevention. The code will exit after the number of steps taken exceed max_step (default to 10000), to set it in config file, write a line like: "max_step=[value]" where value is the number of max_step you want to set.
 
-One last functionality implemented in MVN is an Time Interruption, there is an internal variable called NUM (hardcoded to 50), which represents the time (counted as number of steps) between interruptions, during execution another varible keeps is incremented at each step and, when it reaches NUM, it is made an subroutine call to address 0x000, at this position must be implemented an Interruption Handler.
+One last functionality implemented in MVN is an Time Interruption, there is an internal variable called NUM, which represents the time (counted as number of steps) between interruptions, during execution another varible keeps is incremented at each step and, when it reaches NUM, it is made an subroutine call to address 0x000, at this position must be implemented an Interruption Handler. To activate the Time Interruption you must insert a line in the config file as follows: "time_interrupt=[value]", where value is the number of steps to take before a Time Interruption.
 
 ### To MLR
 
