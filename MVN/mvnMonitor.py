@@ -234,12 +234,17 @@ if os.path.exists("./mvn.config"):
 						max_step=int(word[word.index("=")+1:])
 					except:
 						print("O valor de max_step deve ser inteiro, usando valor padrão.")
+				elif case("time_interupt"):
+					try:
+						time_limit=int(word[word.index("=")+1:])
+					except:
+						print("O valor de time_limit deve ser inteiro, usando valor padrão.")
 				else:
 					print("Parâmetro desconhecido, usando valor padrão.")
 	conf.close()
 
 #First thing to be done is inicialize our MVN
-mvn=inicialize()
+mvn=inicialize(time_limit)
 #Show up the header for the MVN
 head()
 #Show options available
