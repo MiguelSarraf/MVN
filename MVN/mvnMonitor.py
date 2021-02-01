@@ -37,8 +37,8 @@ def dbg_help():
 
 '''Start an MVN, check if there is any 'disp.lst' file and 
 inicialze the devices in it, return the MVN inicialized'''
-def inicialize():
-	mvn=MVN.MVN()
+def inicialize(time_interrupt, time_limit):
+	mvn=MVN.MVN(time_interrupt, time_limit)
 	print("MVN Inicializada\n")
 	if os.path.exists("disp.lst"):
 		mvn.create_disp()
@@ -211,6 +211,8 @@ look like a cmd to the user, but operating the MVN class
 
 #Define steps limit
 max_step=10000
+time_interrupt=False
+time_limit=50
 if os.path.exists("./mvn.config"):
 	conf=open("./mvn.config", "r")
 	data=conf.read()
@@ -234,9 +236,10 @@ if os.path.exists("./mvn.config"):
 						max_step=int(word[word.index("=")+1:])
 					except:
 						print("O valor de max_step deve ser inteiro, usando valor padrão.")
-				elif case("time_interupt"):
+				elif case("time_interrupt"):
 					try:
 						time_limit=int(word[word.index("=")+1:])
+						time_interrupt=True
 					except:
 						print("O valor de time_limit deve ser inteiro, usando valor padrão.")
 				else:
@@ -244,7 +247,7 @@ if os.path.exists("./mvn.config"):
 	conf.close()
 
 #First thing to be done is inicialize our MVN
-mvn=inicialize(time_limit)
+mvn=inicialize(time_interrupt, time_limit)
 #Show up the header for the MVN
 head()
 #Show options available

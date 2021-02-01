@@ -20,7 +20,7 @@ class MVN:
 	list) and set the default devices'''
 	'''NUM represents the number of steps to be done before 
 	executing the Time Interruption (subroutine calling 0x000)'''
-	def __init__(self, time_limit=50):
+	def __init__(self, timeInterrupt=False, time_limit=50):
 		self.mem=memory.memory()
 		self.MAR=register.register()
 		self.MDR=register.register()
@@ -31,6 +31,7 @@ class MVN:
 		self.AC=register.register()
 		self.SP=0x0ffe
 		self.end=True
+		self.timeInterrupt=timeInterrupt
 		self.NUM=time_limit
 		self.nsteps=0
 		self.ula=ULA.ULA()
