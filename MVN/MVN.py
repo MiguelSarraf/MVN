@@ -189,12 +189,12 @@ class MVN:
 	'''dev:=AC
 	IC:=IC+1'''
 	def pd(self):
-		err=0
+		nfound=0
 		for dev in self.devs:
 			if self.OI.get_value()//0x0100==dev.get_type() and self.OI.get_value()%0x0100==dev.get_UC():
 				dev.put_data(self.AC.get_value())
-				err+=1
-		if err==len(self.devs):
+				nfound+=1
+		if nfound==len(self.devs):
 			raise MVNError("Dispositivo não existe")
 		self.IC.set_value(self.IC.get_value()+2)
 		return True
@@ -281,6 +281,14 @@ class MVN:
 				self.set_mem()		
 			else:
 				print("Instrução desconhecida. Código "+str(self.OI.get_value()//0x100))
+		elif self.OI.get_value()%0x100==0xCB:
+			nfound=True
+			for dev in self.devs:
+				if self.AC.get_value()//0x0100==dev.get_type() and self.AC.get_value()%0x0100==dev.get_UC():
+					nfound=False
+					break
+			if nfound: raise MVNError("Dispositivo não existe")
+			dev.clean_buffer()
 		else:
 			print("Operação desconhecida. Código "+str(self.OI.get_value()%0x100))
 		self.IC.set_value(self.IC.get_value()+2)

@@ -54,6 +54,10 @@ class device:
 	def is_writable(self):
 		return self.dtype==1 or self.dtype==2 or self.dtype==3 and self.file_write!=None
 
+	#Return True weather the device has buffer
+	def has_buffer(self):
+		return self.dtype==0 or (self.dtype==3 and self.rwb!="e")
+
 	'''
 	             .-.
 	       ..==./xxx\
@@ -103,6 +107,15 @@ class device:
 		elif case(3):
 			self.file_write.write((value//0x0100).to_bytes(1,byteorder="big"))
 			self.file_write.write((value%0x0100).to_bytes(1,byteorder="big"))
+
+	def clean_buffer(self):
+		if not self.has_buffer():
+			raise MVNError("No buffer to be cleaned")
+		switch(self.dtype)
+		if case(0):
+			self.buffer=[]
+		elif case(3):
+			self.buffer=""
 
 	#Ends up the device
 	def terminate(self):
