@@ -51,7 +51,7 @@ class MVN:
 	OP:=first nibble of IR
 	OI:=rest of IR'''
 	def decode(self):
-		if self.nsteps==self.NUM:
+		if self.nsteps==self.NUM and self.timeInterrupt:
 			self.IR.set_value(0xA000)
 			self.nsteps=0
 		else:
