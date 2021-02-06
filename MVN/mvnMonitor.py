@@ -1,6 +1,7 @@
 __author__="Miguel Sarraf Ferreira Santucci"
 __email__="miguel.sarraf@usp.br"
-__version__="1.0"
+__version__="1.1"
+__year__="2021"
 
 import MVN
 import os.path
@@ -51,7 +52,7 @@ def inicialize(time_interrupt, time_limit):
 def head():
 	print("                Escola Politécnica da Universidade de São Paulo")
 	print("                 PCS3616 - Simulador da Máquina de von Neumann")
-	print("          MVN versão 1.0 (Maio/2020) - Todos os direitos reservados")
+	print("              MVN versão "+__version__+" ("+__year__+") - Todos os direitos reservados")
 
 #Print the header for the devices
 def dev_head():
