@@ -272,12 +272,13 @@ class MVN:
 			elif case(3):
 				#Set stacktop
 				if self.OI.get_value()//0x100!=1: self.os_error(1,self.OI.get_value()//0x100)
-				self.MAR.set_value(self.SP)
-				self.get_mem()
-				self.AC.set_value(self.MDR.get_value())
 				self.MAR.set_value(self.MAR.get_value()-2)
 				self.get_mem()
-				self.MAR.set_value(self.AC.get_value())
+				self.AC.set_value(self.MDR.get_value())
+				self.MAR.set_value(self.SP)
+				self.get_mem()
+				self.MAR.set_value(self.MDR.get_value())
+				self.MDR.set_value(self.AC.get_value())
 				self.set_mem()		
 			else:
 				print("Instrução desconhecida. Código "+str(self.OI.get_value()//0x100))
