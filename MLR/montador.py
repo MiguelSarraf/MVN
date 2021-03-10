@@ -194,10 +194,6 @@ for line in code:
 		if case(["@", "&"]):
 			relocable=line[0]=="&"
 			addr=get_number(line[1])-2
-		#symbol for defining constants
-		elif case("K"):
-			#addr reloc dependent, operand resolved, abs and in
-			final.append([8*relocable*0x1000+addr, get_number(line[1]), False])
 		#symbol for reserving space
 		elif case("$"):
 			n=get_number(line[1])
@@ -215,8 +211,8 @@ for line in code:
 		elif case("#"):
 			end=True
 			break
-		#symbols for instructions
-		elif case(mnem_op):
+		#symbols for instructions or contant
+		elif case(mnem_op) or case("K"):
 			switch(line[1])
 			if case(externals):
 				#addr reloc dependent, operand n resolved, abs and out
@@ -236,10 +232,6 @@ for line in code:
 		if case(["@", "&"]):
 			relocable=line[1]=="&"
 			addr=get_number(line[2])-2
-		#symbol for defining constants
-		elif case("K"):
-			#addr reloc dependent, operand resolved, abs and in
-			final.append([8*relocable*0x1000+addr, get_number(line[2]), False])
 		#symbol for reserving space
 		elif case("$"):
 			n=get_number(line[2])
@@ -257,8 +249,8 @@ for line in code:
 		elif case("#"):
 			end=True
 			break
-		#symbols for instructions
-		elif case(mnem_op):
+		#symbols for instructions or constant
+		elif case(mnem_op) or case("K"):
 			if line[2] in externals:
 				#addr reloc dependent, operand n resolved, abs and out
 				final.append([(8*relocable+5)*0x1000+addr, mnem_op[line[1]]*0x1000+externals[line[2]], False])
