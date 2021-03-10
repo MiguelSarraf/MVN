@@ -212,7 +212,7 @@ for line in code:
 			end=True
 			break
 		#symbols for instructions or contant
-		elif case(mnem_op) or case("K"):
+		elif case(mnem_op):
 			switch(line[1])
 			if case(externals):
 				#addr reloc dependent, operand n resolved, abs and out
@@ -250,7 +250,7 @@ for line in code:
 			end=True
 			break
 		#symbols for instructions or constant
-		elif case(mnem_op) or case("K"):
+		elif case(mnem_op):
 			if line[2] in externals:
 				#addr reloc dependent, operand n resolved, abs and out
 				final.append([(8*relocable+5)*0x1000+addr, mnem_op[line[1]]*0x1000+externals[line[2]], False])
