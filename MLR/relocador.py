@@ -7,7 +7,7 @@ def load(name):
 	raw=raw.split("\n")
 	code=[]
 	for line in raw:
-		code.append(line.split(" ")[:-1])
+		code.append(line.split(" "))
 	code.pop(-1)
 	return code
 
