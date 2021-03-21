@@ -281,7 +281,7 @@ class MVN:
 				self.MDR.set_value(self.AC.get_value())
 				self.set_mem()		
 			else:
-				print("Instrução desconhecida. Código "+str(self.OI.get_value()//0x100))
+				print("Instrução desconhecida. Código "+str(self.AC.get_value()//0x100))
 		elif self.OI.get_value()%0x100==0xCB:
 			nfound=True
 			for dev in self.devs:
