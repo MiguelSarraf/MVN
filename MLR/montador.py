@@ -194,6 +194,9 @@ for line in code:
 		if case(["@", "&"]):
 			relocable=line[0]=="&"
 			addr=get_number(line[1])-2
+		#entry_points and externals don't increment addr
+		elif case(">") or case("<"):
+			addr-=2
 		#symbol for reserving space
 		elif case("$"):
 			n=get_number(line[1])
@@ -222,8 +225,8 @@ for line in code:
 				final.append([(8*relocable+2*rotules_reloc[line[1]])*0x1000+addr, mnem_op[line[0]]*0x1000+rotules[line[1]], False])
 			else:
 				#addr reloc dependent, operand resolved, reloc dependent and in
-				final.append([10*relocable*0x1000+addr, mnem_op[line[0]]*0x1000+get_number(line[1]), False])
-		elif not case("<") and not case(">"):
+				final.append([8*relocable*0x1000+addr, mnem_op[line[0]]*0x1000+get_number(line[1]), False])
+		else:
 			raise ValueError("Instrucao mal formulada na linha "+str(line[-1]))
 		addr+=2
 	elif len(line)==4:
@@ -232,6 +235,9 @@ for line in code:
 		if case(["@", "&"]):
 			relocable=line[1]=="&"
 			addr=get_number(line[2])-2
+		#entry_points and externals don't increment addr
+		elif case(">") or case("<"):
+			addr-=2
 		#symbol for reserving space
 		elif case("$"):
 			n=get_number(line[2])
@@ -259,7 +265,7 @@ for line in code:
 				final.append([(8*relocable+2*rotules_reloc[line[2]])*0x1000+addr, mnem_op[line[1]]*0x1000+rotules[line[2]], False])
 			else:
 				#addr reloc dependent, operand resolved, reloc dependent and in
-				final.append([10*relocable*0x1000+addr, mnem_op[line[1]]*0x1000+get_number(line[2]), False])
+				final.append([8*relocable*0x1000+addr, mnem_op[line[1]]*0x1000+get_number(line[2]), False])
 		else:
 			raise ValueError("Instrucao mal formulada na linha "+str(line[-1]))
 		addr+=2
