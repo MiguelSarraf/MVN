@@ -362,3 +362,4 @@ class MVN:
 			if self.devs[dev].get_type()==dtype and self.devs[dev].get_UC()==UC:
 				self.devs[dev].terminate()
 				self.devs.pop(dev)
+				return
