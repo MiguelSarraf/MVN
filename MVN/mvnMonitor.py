@@ -5,6 +5,7 @@ __year__="2021"
 
 import MVN
 import os.path
+import argparse
 from mvnutils import *
 from switchcase import *
 from c3po import C3PO
@@ -166,46 +167,19 @@ Here starts the main code for the MVN's user interface, this will
 look like a cmd to the user, but operating the MVN class
 """
 
+parser=argparse.ArgumentParser(description="MVN execution parameters")
+parser.add_argument("-l", "--language", 		action="store", type=str, required=False, help="Language of the MVN. String")
+parser.add_argument("-s", "--max_step", 		action="store", type=int, required=False, help="The maximum number of steps to be considered not an infinite loop. Integer")
+parser.add_argument("-i", "--time_interrupt", 	action="store", type=int, required=False, help="Tha maximum number of steps before making a time interruption. If not given, time interruptins will be disabled. Integer")
+args=parser.parse_args()
+
 #Initializes C3PO
-#language selection will be added at another time
-c3po=C3PO("en")
+c3po=C3PO(args.language if args.language!=None else "en")
 
 #Define steps limit
-max_step=10000
-time_interrupt=False
-time_limit=50
-if os.path.exists("./mvn.config"):
-	conf=open("./mvn.config", "r")
-	data=conf.read()
-	data=data.split("\n")
-	line=0
-	while line<len(data):
-		data[line]=clean(data[line])
-		if len(data[line])==0:
-			data.pop(line)
-			line-=1
-		line+=1
-	else:
-		for line in data:
-			text=""
-			for word in line:
-				text+=word
-			if "=" in word:
-				switch(word[:word.index("=")])
-				if case("max_step"):
-					try:
-						max_step=int(word[word.index("=")+1:])
-					except:
-						print(c3po("int_val", ("max_step")))
-				elif case("time_interrupt"):
-					try:
-						time_limit=int(word[word.index("=")+1:])
-						time_interrupt=True
-					except:
-						print(c3po("int_val", ("time_limit")))
-				else:
-					print(c3po("unk_par"))
-	conf.close()
+max_step=args.max_step if args.max_step!=None else 10000
+time_interrupt=args.time_interrupt!=None
+time_limit=args.time_interrupt
 
 #First thing to be done is inicialize our MVN
 mvn=inicialize(time_interrupt, time_limit)

@@ -1,5 +1,6 @@
 class C3PO:
 	def __init__(self, language):
+		if language not in ["en","pt","es","tl"]: raise ValueError("Language not suported")
 		self.language=language
 		self.message={
 			"languages":{
@@ -145,12 +146,6 @@ class C3PO:
 				"pt":"O valor de %s deve ser inteiro, usando valor padrão.",
 				"es":"El valor de %s tiene que ser entero, utilizando el valor estándar",
 				"tl":"naQ HnIS %s mI', mI' motlh lo'taH"
-			},
-			"unk_par":{
-				"en":"Unknown parameter",
-				"pt":"Parâmetro desconhecido",
-				"es":"Parámetro desconocido",
-				"tl":"De'Wa'DIch Sovta'"
 			},
 			"inp_file":{
 				"en":"Inform input file name: ",
